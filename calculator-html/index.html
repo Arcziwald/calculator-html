@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Oszczędności - Automatyzacja Księgowości</title>
+    <title data-i18n="pageTitle">Kalkulator Oszczędności - Automatyzacja Księgowości</title>
     <style>
         * {
             margin: 0;
@@ -30,7 +31,7 @@
         }
 
         .calc-wrapper {
-            max-width: 650px;
+            max-width: 750px;
             margin: 0 auto;
         }
 
@@ -39,13 +40,47 @@
             color: var(--text-white);
             padding: 40px 30px;
             border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0, 115, 177, 0.2), 0 5px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 50px rgba(0, 115, 177, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
             border: 1px solid var(--border-color);
         }
 
         .calc-header {
             text-align: center;
             margin-bottom: 35px;
+            position: relative;
+        }
+
+        /* --- Language switcher --- */
+        .lang-switch {
+            position: absolute;
+            top: -32px;
+            right: 0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            background: rgba(0, 212, 255, 0.12);
+            border: 1px solid rgba(0, 212, 255, 0.35);
+            color: var(--accent-cyan);
+            padding: 7px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: .5px;
+            transition: all .2s ease;
+        }
+
+        .lang-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .lang-btn.active {
+            background: rgba(0, 212, 255, 0.22);
+            border-color: rgba(0, 212, 255, 0.7);
+            color: #fff;
         }
 
         .calc-header h2 {
@@ -61,7 +96,6 @@
             line-height: 1.5;
         }
 
-        /* Tasks Section */
         .tasks-section {
             margin-bottom: 30px;
         }
@@ -151,7 +185,6 @@
             transform: rotate(180deg);
         }
 
-        /* Task Details (Expandable) */
         .task-details {
             max-height: 0;
             overflow: hidden;
@@ -224,7 +257,6 @@
             font-weight: 600;
         }
 
-        /* Global Input Section */
         .input-section {
             margin-bottom: 30px;
             background: rgba(0, 0, 0, 0.2);
@@ -270,7 +302,6 @@
             display: none;
         }
 
-        /* Calculate Button */
         .calc-btn {
             width: 100%;
             padding: 16px;
@@ -299,7 +330,6 @@
             transform: none;
         }
 
-        /* Results Section */
         .results-section {
             opacity: 0;
             max-height: 0;
@@ -368,7 +398,6 @@
             font-size: 18px;
         }
 
-        /* Progress Bar */
         .progress-container {
             margin: 20px 0;
         }
@@ -430,7 +459,6 @@
             border: 1px solid var(--success-green);
         }
 
-        /* CTA Section */
         .cta-section {
             text-align: center;
             margin-top: 25px;
@@ -463,7 +491,6 @@
             box-shadow: 0 8px 30px rgba(0, 212, 255, 0.5);
         }
 
-        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -480,7 +507,6 @@
             font-size: 15px;
         }
 
-        /* Toast Notification */
         .toast {
             position: fixed;
             top: 20px;
@@ -502,7 +528,6 @@
             transform: translateX(0);
         }
 
-        /* Responsive */
         @media (max-width: 600px) {
             .calc-container {
                 padding: 30px 20px;
@@ -536,14 +561,18 @@
             .input-row {
                 grid-template-columns: 1fr;
             }
+
+            .lang-switch {
+                top: -18px;
+            }
         }
 
-        /* Animation */
         @keyframes slideIn {
             from {
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -555,409 +584,666 @@
         }
     </style>
 </head>
+
 <body>
 
-<div class="calc-wrapper">
-    <div class="calc-container">
-        <!-- Header -->
-        <div class="calc-header">
-            <h2>💡 Ile Czasu i Pieniędzy Możesz Odzyskać?</h2>
-            <p>Sprawdź, ile zaoszczędzisz dzięki automatyzacji powtarzalnych zadań w Twoim biurze</p>
-        </div>
+    <div class="calc-wrapper">
+        <div class="calc-container">
 
-        <!-- Tasks Section -->
-        <div class="tasks-section">
-            <div class="section-title">📋 Kliknij zadania i wprowadź swoje dane</div>
-            <div class="task-grid">
-                
-                <!-- Task 1: Przypomnienia -->
-                <div class="task-item" data-task="przypomnienia">
-                    <div class="task-header">
-                        <div class="task-icon">📧</div>
-                        <div class="task-text">
-                            <div class="task-title">Przypomnienia o dokumentach</div>
-                            <div class="task-desc">Automatyczne maile o brakujących fakturach, umowach, PIT-ach</div>
-                        </div>
-                        <div class="task-expand-icon">▼</div>
-                    </div>
-                    <div class="task-details">
-                        <div class="task-inputs">
-                            <div class="input-row">
-                                <div class="task-input-group">
-                                    <label>Liczba klientów:</label>
-                                    <input type="number" class="task-input" data-field="count" placeholder="np. 80" value="80" min="0">
-                                </div>
-                                <div class="task-input-group">
-                                    <label>Czas na przypomnienie (min):</label>
-                                    <input type="number" class="task-input" data-field="time" placeholder="np. 6" value="6" min="0">
-                                </div>
-                            </div>
-                            <div class="task-result">
-                                Miesięcznie: <span class="task-result-value">0</span> min
-                            </div>
-                        </div>
-                    </div>
+            <!-- Header -->
+            <div class="calc-header">
+
+                <!-- Language Switcher -->
+                <div class="lang-switch" aria-label="Language switch">
+                    <button class="lang-btn" type="button" data-set-lang="en">EN</button>
+                    <button class="lang-btn" type="button" data-set-lang="pl">PL</button>
                 </div>
 
-                <!-- Task 2: Faktury cykliczne -->
-                <div class="task-item" data-task="faktury">
-                    <div class="task-header">
-                        <div class="task-icon">📄</div>
-                        <div class="task-text">
-                            <div class="task-title">Faktury cykliczne</div>
-                            <div class="task-desc">Automatyczne generowanie i wysyłka faktur abonamentowych</div>
-                        </div>
-                        <div class="task-expand-icon">▼</div>
-                    </div>
-                    <div class="task-details">
-                        <div class="task-inputs">
-                            <div class="input-row">
-                                <div class="task-input-group">
-                                    <label>Liczba faktur/mc:</label>
-                                    <input type="number" class="task-input" data-field="count" placeholder="np. 150" value="150" min="0">
-                                </div>
-                                <div class="task-input-group">
-                                    <label>Czas na fakturę (min):</label>
-                                    <input type="number" class="task-input" data-field="time" placeholder="np. 4" value="4" min="0">
-                                </div>
-                            </div>
-                            <div class="task-result">
-                                Miesięcznie: <span class="task-result-value">0</span> min
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Task 3: Follow-up płatności -->
-                <div class="task-item" data-task="followup">
-                    <div class="task-header">
-                        <div class="task-icon">💬</div>
-                        <div class="task-text">
-                            <div class="task-title">Follow-up płatności</div>
-                            <div class="task-desc">Przypomnienia o nieopłaconych fakturach, eskalacje</div>
-                        </div>
-                        <div class="task-expand-icon">▼</div>
-                    </div>
-                    <div class="task-details">
-                        <div class="task-inputs">
-                            <div class="input-row">
-                                <div class="task-input-group">
-                                    <label>Liczba follow-upów/mc:</label>
-                                    <input type="number" class="task-input" data-field="count" placeholder="np. 60" value="60" min="0">
-                                </div>
-                                <div class="task-input-group">
-                                    <label>Czas na follow-up (min):</label>
-                                    <input type="number" class="task-input" data-field="time" placeholder="np. 5" value="5" min="0">
-                                </div>
-                            </div>
-                            <div class="task-result">
-                                Miesięcznie: <span class="task-result-value">0</span> min
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Task 4: Monitorowanie terminów -->
-                <div class="task-item" data-task="podatki">
-                    <div class="task-header">
-                        <div class="task-icon">📊</div>
-                        <div class="task-text">
-                            <div class="task-title">Monitorowanie terminów</div>
-                            <div class="task-desc">Automatyczne powiadomienia o terminach VAT, ZUS, JPK</div>
-                        </div>
-                        <div class="task-expand-icon">▼</div>
-                    </div>
-                    <div class="task-details">
-                        <div class="task-inputs">
-                            <div class="input-row">
-                                <div class="task-input-group">
-                                    <label>Liczba klientów:</label>
-                                    <input type="number" class="task-input" data-field="count" placeholder="np. 80" value="80" min="0">
-                                </div>
-                                <div class="task-input-group">
-                                    <label>Czas monitorowania (min):</label>
-                                    <input type="number" class="task-input" data-field="time" placeholder="np. 3" value="3" min="0">
-                                </div>
-                            </div>
-                            <div class="task-result">
-                                Miesięcznie: <span class="task-result-value">0</span> min
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Global Input Section -->
-        <div class="input-section">
-            <div class="section-title">💰 Twoja stawka</div>
-            
-            <div class="input-group">
-                <label for="stawka">Średnia stawka godzinowa pracownika (zł/h):</label>
-                <input type="number" id="stawka" placeholder="np. 100" value="100" min="1" step="5">
-                <div class="error" id="err-stawka">Wprowadź stawkę ≥ 1 zł</div>
+                <h2 data-i18n="headerTitle">💡 Ile Czasu i Pieniędzy Możesz Odzyskać?</h2>
+                <p data-i18n="headerSubtitle">Sprawdź, ile zaoszczędzisz dzięki automatyzacji powtarzalnych zadań w
+                    Twoim biurze</p>
             </div>
 
-            <button class="calc-btn" onclick="calculateSavings()">Oblicz Oszczędności</button>
-        </div>
+            <!-- Tasks Section -->
+            <div class="tasks-section">
+                <div class="section-title" data-i18n="tasksSectionTitle">📋 Kliknij zadania i wprowadź swoje dane</div>
 
-        <!-- Results Section -->
-        <div class="results-section" id="results">
-            <div class="results-card">
-                <div class="results-grid">
-                    <div class="result-box">
-                        <div class="result-label">Miesięcznie</div>
-                        <div class="result-value" id="monthly-hours">0</div>
-                        <div class="result-unit">godzin</div>
+                <div class="task-grid">
+
+                    <!-- Task 1: Przypomnienia -->
+                    <div class="task-item" data-task="przypomnienia">
+                        <div class="task-header">
+                            <div class="task-icon">📧</div>
+                            <div class="task-text">
+                                <div class="task-title" data-i18n="task1Title">Przypomnienia o dokumentach</div>
+                                <div class="task-desc" data-i18n="task1Desc">Automatyczne maile o brakujących fakturach,
+                                    umowach, PIT-ach</div>
+                            </div>
+                            <div class="task-expand-icon">▼</div>
+                        </div>
+
+                        <div class="task-details">
+                            <div class="task-inputs">
+                                <div class="input-row">
+                                    <div class="task-input-group">
+                                        <label data-i18n="labelClients">Liczba klientów:</label>
+                                        <input type="number" class="task-input" data-field="count"
+                                            data-i18n-placeholder="phExample80" placeholder="np. 80" value="80" min="0">
+                                    </div>
+                                    <div class="task-input-group">
+                                        <label data-i18n="labelReminderTime">Czas na przypomnienie (min):</label>
+                                        <input type="number" class="task-input" data-field="time"
+                                            data-i18n-placeholder="phExample6" placeholder="np. 6" value="6" min="0">
+                                    </div>
+                                </div>
+                                <div class="task-result">
+                                    <span data-i18n="monthlyPrefix">Miesięcznie:</span>
+                                    <span class="task-result-value">0</span>
+                                    <span data-i18n="minutesShort">min</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="result-box">
-                        <div class="result-label">Rocznie</div>
-                        <div class="result-value" id="yearly-hours">0</div>
-                        <div class="result-unit">godzin</div>
+
+                    <!-- Task 2: Faktury cykliczne -->
+                    <div class="task-item" data-task="faktury">
+                        <div class="task-header">
+                            <div class="task-icon">📄</div>
+                            <div class="task-text">
+                                <div class="task-title" data-i18n="task2Title">Faktury cykliczne</div>
+                                <div class="task-desc" data-i18n="task2Desc">Automatyczne generowanie i wysyłka faktur
+                                    abonamentowych</div>
+                            </div>
+                            <div class="task-expand-icon">▼</div>
+                        </div>
+
+                        <div class="task-details">
+                            <div class="task-inputs">
+                                <div class="input-row">
+                                    <div class="task-input-group">
+                                        <label data-i18n="labelInvoicesPerMonth">Liczba faktur/mc:</label>
+                                        <input type="number" class="task-input" data-field="count"
+                                            data-i18n-placeholder="phExample150" placeholder="np. 150" value="150"
+                                            min="0">
+                                    </div>
+                                    <div class="task-input-group">
+                                        <label data-i18n="labelInvoiceTime">Czas na fakturę (min):</label>
+                                        <input type="number" class="task-input" data-field="time"
+                                            data-i18n-placeholder="phExample4" placeholder="np. 4" value="4" min="0">
+                                    </div>
+                                </div>
+                                <div class="task-result">
+                                    <span data-i18n="monthlyPrefix">Miesięcznie:</span>
+                                    <span class="task-result-value">0</span>
+                                    <span data-i18n="minutesShort">min</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="result-sub">
-                    Wartość finansowa: <strong id="yearly-money">0 zł</strong> rocznie
-                    <br>
-                    To równowartość: <strong id="work-days">0 dni roboczych</strong>
-                </div>
+                    <!-- Task 3: Follow-up płatności -->
+                    <div class="task-item" data-task="followup">
+                        <div class="task-header">
+                            <div class="task-icon">💬</div>
+                            <div class="task-text">
+                                <div class="task-title" data-i18n="task3Title">Follow-up płatności</div>
+                                <div class="task-desc" data-i18n="task3Desc">Przypomnienia o nieopłaconych fakturach,
+                                    eskalacje</div>
+                            </div>
+                            <div class="task-expand-icon">▼</div>
+                        </div>
 
-                <div class="progress-container">
-                    <div class="progress-label">Potencjał automatyzacji</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
+                        <div class="task-details">
+                            <div class="task-inputs">
+                                <div class="input-row">
+                                    <div class="task-input-group">
+                                        <label data-i18n="labelFollowupsPerMonth">Liczba follow-upów/mc:</label>
+                                        <input type="number" class="task-input" data-field="count"
+                                            data-i18n-placeholder="phExample60" placeholder="np. 60" value="60" min="0">
+                                    </div>
+                                    <div class="task-input-group">
+                                        <label data-i18n="labelFollowupTime">Czas na follow-up (min):</label>
+                                        <input type="number" class="task-input" data-field="time"
+                                            data-i18n-placeholder="phExample5" placeholder="np. 5" value="5" min="0">
+                                    </div>
+                                </div>
+                                <div class="task-result">
+                                    <span data-i18n="monthlyPrefix">Miesięcznie:</span>
+                                    <span class="task-result-value">0</span>
+                                    <span data-i18n="minutesShort">min</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div class="result-highlight">
-                    <p>🚀 Dzięki automatyzacji odzyskasz:</p>
-                    <p><strong id="monthly-days">0 dni</strong> miesięcznie na rozwój i nowych klientów!</p>
-                    <div class="efficiency-badge">~90% mniej manualnej pracy</div>
+                    <!-- Task 4: Monitorowanie terminów -->
+                    <div class="task-item" data-task="podatki">
+                        <div class="task-header">
+                            <div class="task-icon">📊</div>
+                            <div class="task-text">
+                                <div class="task-title" data-i18n="task4Title">Monitorowanie terminów</div>
+                                <div class="task-desc" data-i18n="task4Desc">Automatyczne powiadomienia o terminach VAT,
+                                    ZUS, JPK</div>
+                            </div>
+                            <div class="task-expand-icon">▼</div>
+                        </div>
+
+                        <div class="task-details">
+                            <div class="task-inputs">
+                                <div class="input-row">
+                                    <div class="task-input-group">
+                                        <label data-i18n="labelClients">Liczba klientów:</label>
+                                        <input type="number" class="task-input" data-field="count"
+                                            data-i18n-placeholder="phExample80" placeholder="np. 80" value="80" min="0">
+                                    </div>
+                                    <div class="task-input-group">
+                                        <label data-i18n="labelMonitoringTime">Czas monitorowania (min):</label>
+                                        <input type="number" class="task-input" data-field="time"
+                                            data-i18n-placeholder="phExample3" placeholder="np. 3" value="3" min="0">
+                                    </div>
+                                </div>
+                                <div class="task-result">
+                                    <span data-i18n="monthlyPrefix">Miesięcznie:</span>
+                                    <span class="task-result-value">0</span>
+                                    <span data-i18n="minutesShort">min</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- CTA Section -->
-            <div class="cta-section">
-                <p class="cta-text">Chcesz zobaczyć, jak to działa w praktyce?</p>
-                <a href="#pricing" class="cta-button" onclick="scrollToPricing(event)">Zobacz Ofertę</a>
+            <!-- Global Input Section -->
+            <div class="input-section">
+                <div class="section-title" data-i18n="rateSectionTitle">💰 Twoja stawka</div>
+
+                <div class="input-group">
+                    <label for="stawka" data-i18n="rateLabel">Średnia stawka godzinowa pracownika (zł/h):</label>
+                    <input type="number" id="stawka" data-i18n-placeholder="phExample100" placeholder="np. 100"
+                        value="100" min="1" step="5">
+                    <div class="error" id="err-stawka" data-i18n="rateError">Wprowadź stawkę ≥ 1 zł</div>
+                </div>
+
+                <button class="calc-btn" onclick="calculateSavings()" data-i18n="calcButton">Oblicz
+                    Oszczędności</button>
             </div>
-        </div>
 
-        <!-- Empty State -->
-        <div class="empty-state" id="empty-state">
-            <div class="empty-state-icon">👆</div>
-            <p>Kliknij zadania powyżej i wprowadź swoje dane,<br>aby zobaczyć potencjalne oszczędności</p>
-        </div>
+            <!-- Results Section -->
+            <div class="results-section" id="results">
+                <div class="results-card">
+                    <div class="results-grid">
+                        <div class="result-box">
+                            <div class="result-label" data-i18n="monthlyLabel">Miesięcznie</div>
+                            <div class="result-value" id="monthly-hours">0</div>
+                            <div class="result-unit" data-i18n="hoursUnit">godzin</div>
+                        </div>
+                        <div class="result-box">
+                            <div class="result-label" data-i18n="yearlyLabel">Rocznie</div>
+                            <div class="result-value" id="yearly-hours">0</div>
+                            <div class="result-unit" data-i18n="hoursUnit">godzin</div>
+                        </div>
+                    </div>
 
+                    <div class="result-sub">
+                        <span data-i18n="financialValuePrefix">Wartość finansowa:</span>
+                        <strong id="yearly-money">0 zł</strong>
+                        <span data-i18n="perYearSuffix">rocznie</span>
+                        <br>
+                        <span data-i18n="equivalentPrefix">To równowartość:</span>
+                        <strong id="work-days">0 dni roboczych</strong>
+                    </div>
+
+                    <div class="progress-container">
+                        <div class="progress-label" data-i18n="automationPotential">Potencjał automatyzacji</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="result-highlight">
+                        <p data-i18n="highlightLine1">🚀 Dzięki automatyzacji odzyskasz:</p>
+                        <p><strong id="monthly-days">0 dni</strong> <span data-i18n="highlightLine2Suffix">miesięcznie
+                                na rozwój i nowych klientów!</span></p>
+                        <div class="efficiency-badge" data-i18n="badgeText">~90% mniej manualnej pracy</div>
+                    </div>
+                </div>
+
+                <!-- CTA Section -->
+                <div class="cta-section">
+                    <p class="cta-text" data-i18n="ctaText">Chcesz zobaczyć, jak to działa w praktyce?</p>
+                    <a href="#pricing" class="cta-button" onclick="scrollToPricing(event)" data-i18n="ctaButton">Zobacz
+                        Ofertę</a>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="empty-state">
+                <div class="empty-state-icon">👆</div>
+                <p data-i18n="emptyStateText">Kliknij zadania powyżej i wprowadź swoje dane,<br>aby zobaczyć potencjalne
+                    oszczędności</p>
+            </div>
+
+        </div>
     </div>
-</div>
 
-<!-- Toast Notification -->
-<div class="toast" id="toast">✓ Dane zapisane!</div>
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">✓ Dane zapisane!</div>
 
-<script>
-    // Elements
-    const taskItems = document.querySelectorAll('.task-item');
-    const stawkaInput = document.getElementById('stawka');
-    const resultsSection = document.getElementById('results');
-    const emptyState = document.getElementById('empty-state');
-    const toast = document.getElementById('toast');
-    
-    // Result elements
-    const monthlyHoursEl = document.getElementById('monthly-hours');
-    const yearlyHoursEl = document.getElementById('yearly-hours');
-    const yearlyMoneyEl = document.getElementById('yearly-money');
-    const workDaysEl = document.getElementById('work-days');
-    const monthlyDaysEl = document.getElementById('monthly-days');
-    const progressFill = document.getElementById('progress-fill');
+    <script>
+        // ===== I18N DICTIONARY =====
+        const i18n = {
+            pl: {
+                pageTitle: "Kalkulator Oszczędności - Automatyzacja Księgowości",
+                headerTitle: "💡 Ile Czasu i Pieniędzy Możesz Odzyskać?",
+                headerSubtitle: "Sprawdź, ile zaoszczędzisz dzięki automatyzacji powtarzalnych zadań w Twoim biurze",
 
-    // Constants
-    const SAVINGS_PERCENT = 0.9; // 90% efficiency
-    const MAX_HOURS = 60; // Max hours for progress bar scale
+                tasksSectionTitle: "📋 Kliknij zadania i wprowadź swoje dane",
+                task1Title: "Przypomnienia o dokumentach",
+                task1Desc: "Automatyczne maile o brakujących fakturach, umowach, PIT-ach",
+                task2Title: "Faktury cykliczne",
+                task2Desc: "Automatyczne generowanie i wysyłka faktur abonamentowych",
+                task3Title: "Follow-up płatności",
+                task3Desc: "Przypomnienia o nieopłaconych fakturach, eskalacje",
+                task4Title: "Monitorowanie terminów",
+                task4Desc: "Automatyczne powiadomienia o terminach VAT, ZUS, JPK",
 
-    // Load saved data from localStorage
-    window.onload = () => {
-        const saved = localStorage.getItem('calcData');
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                
-                // Restore stawka
-                if (data.stawka) stawkaInput.value = data.stawka;
-                
-                // Restore tasks
-                if (data.tasks) {
-                    data.tasks.forEach(taskData => {
-                        const taskItem = document.querySelector(`[data-task="${taskData.name}"]`);
-                        if (taskItem) {
-                            // Activate task
-                            if (taskData.active) {
-                                taskItem.classList.add('active');
-                            }
-                            
-                            // Restore input values
-                            const inputs = taskItem.querySelectorAll('.task-input');
-                            inputs.forEach(input => {
-                                const field = input.dataset.field;
-                                if (taskData[field] !== undefined) {
-                                    input.value = taskData[field];
-                                }
-                            });
-                            
-                            // Update task result
-                            updateTaskResult(taskItem);
-                        }
-                    });
-                }
-                
-                showToast('Dane załadowane z ostatniej sesji');
-            } catch (e) {
-                console.log('Error loading saved data');
+                labelClients: "Liczba klientów:",
+                labelReminderTime: "Czas na przypomnienie (min):",
+                labelInvoicesPerMonth: "Liczba faktur/mc:",
+                labelInvoiceTime: "Czas na fakturę (min):",
+                labelFollowupsPerMonth: "Liczba follow-upów/mc:",
+                labelFollowupTime: "Czas na follow-up (min):",
+                labelMonitoringTime: "Czas monitorowania (min):",
+
+                monthlyPrefix: "Miesięcznie:",
+                minutesShort: "min",
+
+                rateSectionTitle: "💰 Twoja stawka",
+                rateLabel: "Średnia stawka godzinowa pracownika (zł/h):",
+                rateError: "Wprowadź stawkę ≥ 1 zł",
+                calcButton: "Oblicz Oszczędności",
+
+                monthlyLabel: "Miesięcznie",
+                yearlyLabel: "Rocznie",
+                hoursUnit: "godzin",
+
+                financialValuePrefix: "Wartość finansowa:",
+                perYearSuffix: "rocznie",
+                equivalentPrefix: "To równowartość:",
+                automationPotential: "Potencjał automatyzacji",
+
+                highlightLine1: "🚀 Dzięki automatyzacji odzyskasz:",
+                highlightLine2Suffix: "miesięcznie na rozwój i nowych klientów!",
+                badgeText: "~90% mniej manualnej pracy",
+
+                ctaText: "Chcesz zobaczyć, jak to działa w praktyce?",
+                ctaButton: "Zobacz Ofertę",
+
+                emptyStateText: "Kliknij zadania powyżej i wprowadź swoje dane,<br>aby zobaczyć potencjalne oszczędności",
+
+                toastSaved: "✓ Obliczenia zapisane!",
+                toastLoaded: "Dane załadowane z ostatniej sesji",
+
+                // placeholders
+                phExample80: "np. 80",
+                phExample6: "np. 6",
+                phExample150: "np. 150",
+                phExample4: "np. 4",
+                phExample60: "np. 60",
+                phExample5: "np. 5",
+                phExample3: "np. 3",
+                phExample100: "np. 100",
+
+                // dynamic units for results
+                workDaysSuffix: "dni roboczych",
+                monthlyDaysSuffix: "dni"
+            },
+            en: {
+                pageTitle: "Savings Calculator - Accounting Automation",
+                headerTitle: "💡 How Much Time and Money Can You Recover?",
+                headerSubtitle: "Estimate how much you can save by automating repetitive tasks in your accounting office",
+
+                tasksSectionTitle: "📋 Click a task and enter your numbers",
+                task1Title: "Missing documents reminders",
+                task1Desc: "Automated emails for missing invoices, agreements, tax documents",
+                task2Title: "Recurring invoices",
+                task2Desc: "Automatic generation and sending of subscription invoices",
+                task3Title: "Payment follow-ups",
+                task3Desc: "Reminders for unpaid invoices and escalation steps",
+                task4Title: "Deadline monitoring",
+                task4Desc: "Automatic reminders for VAT, payroll, reporting deadlines",
+
+                labelClients: "Number of clients:",
+                labelReminderTime: "Time per reminder (min):",
+                labelInvoicesPerMonth: "Invoices per month:",
+                labelInvoiceTime: "Time per invoice (min):",
+                labelFollowupsPerMonth: "Follow-ups per month:",
+                labelFollowupTime: "Time per follow-up (min):",
+                labelMonitoringTime: "Monitoring time (min):",
+
+                monthlyPrefix: "Monthly:",
+                minutesShort: "min",
+
+                rateSectionTitle: "💰 Your rate",
+                rateLabel: "Average hourly rate (€/h):",
+                rateError: "Enter a rate ≥ 1 €",
+                calcButton: "Calculate savings",
+
+                monthlyLabel: "Monthly",
+                yearlyLabel: "Yearly",
+                hoursUnit: "hours",
+
+                financialValuePrefix: "Financial value:",
+                perYearSuffix: "per year",
+                equivalentPrefix: "Equivalent to:",
+                automationPotential: "Automation potential",
+
+                highlightLine1: "🚀 With automation you can recover:",
+                highlightLine2Suffix: "per month for growth and new clients!",
+                badgeText: "~90% less manual work",
+
+                ctaText: "Want to see how it works in practice?",
+                ctaButton: "See the offer",
+
+                emptyStateText: "Click tasks above and enter your numbers<br>to see potential savings",
+
+                toastSaved: "✓ Calculations saved!",
+                toastLoaded: "Data loaded from your last session",
+
+                // placeholders
+                phExample80: "e.g. 80",
+                phExample6: "e.g. 6",
+                phExample150: "e.g. 150",
+                phExample4: "e.g. 4",
+                phExample60: "e.g. 60",
+                phExample5: "e.g. 5",
+                phExample3: "e.g. 3",
+                phExample100: "e.g. 100",
+
+                // dynamic units for results
+                workDaysSuffix: "work days",
+                monthlyDaysSuffix: "days"
             }
-        }
-        
-        // Initialize task results
-        taskItems.forEach(item => {
-            updateTaskResult(item);
-        });
-    };
-
-    // Task click handling - toggle expand
-    taskItems.forEach(item => {
-        item.querySelector('.task-header').addEventListener('click', function() {
-            item.classList.toggle('active');
-        });
-        
-        // Real-time calculation on input change
-        const inputs = item.querySelectorAll('.task-input');
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                updateTaskResult(item);
-            });
-        });
-    });
-
-    // Update task result display
-    function updateTaskResult(taskItem) {
-        const inputs = taskItem.querySelectorAll('.task-input');
-        const countInput = taskItem.querySelector('[data-field="count"]');
-        const timeInput = taskItem.querySelector('[data-field="time"]');
-        const resultEl = taskItem.querySelector('.task-result-value');
-        
-        if (countInput && timeInput && resultEl) {
-            const count = parseFloat(countInput.value) || 0;
-            const time = parseFloat(timeInput.value) || 0;
-            const total = count * time;
-            
-            resultEl.textContent = total.toFixed(0);
-        }
-    }
-
-    // Smooth scroll for CTA
-    function scrollToPricing(e) {
-        e.preventDefault();
-        const pricingSection = document.querySelector('#pricing');
-        if (pricingSection) {
-            pricingSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
-
-    // Show toast notification
-    function showToast(message) {
-        toast.textContent = message;
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 2000);
-    }
-
-    // Calculate function
-    function calculateSavings() {
-        // Validate hourly rate
-        const stawka = parseFloat(stawkaInput.value) || 0;
-        if (stawka < 1) {
-            document.getElementById('err-stawka').style.display = 'block';
-            stawkaInput.focus();
-            return;
-        } else {
-            document.getElementById('err-stawka').style.display = 'none';
-        }
-
-        // Calculate total time from active tasks
-        let totalMonthlyMinutes = 0;
-        let selectedCount = 0;
-        const tasksData = [];
-
-        taskItems.forEach(item => {
-            const isActive = item.classList.contains('active');
-            const taskName = item.dataset.task;
-            
-            const countInput = item.querySelector('[data-field="count"]');
-            const timeInput = item.querySelector('[data-field="time"]');
-            
-            const count = parseFloat(countInput.value) || 0;
-            const time = parseFloat(timeInput.value) || 0;
-            
-            // Save task data
-            tasksData.push({
-                name: taskName,
-                active: isActive,
-                count: count,
-                time: time
-            });
-            
-            // Only count if active
-            if (isActive) {
-                selectedCount++;
-                totalMonthlyMinutes += count * time;
-            }
-        });
-
-        // Show/hide results
-        if (selectedCount === 0) {
-            resultsSection.classList.remove('show');
-            emptyState.style.display = 'block';
-            return;
-        } else {
-            resultsSection.classList.add('show');
-            emptyState.style.display = 'none';
-        }
-
-        // Calculate savings with 90% efficiency
-        const monthlyHoursManual = totalMonthlyMinutes / 60;
-        const monthlyHoursSaved = Math.round(monthlyHoursManual * SAVINGS_PERCENT);
-        const yearlyHoursSaved = monthlyHoursSaved * 12;
-        const yearlyMoney = Math.round(yearlyHoursSaved * stawka);
-        const workDays = Math.round(yearlyHoursSaved / 8);
-        const monthlyDays = Math.round(monthlyHoursSaved / 8);
-
-        // Format numbers with spaces
-        const formatNum = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-
-        // Update DOM
-        monthlyHoursEl.textContent = formatNum(monthlyHoursSaved);
-        yearlyHoursEl.textContent = formatNum(yearlyHoursSaved);
-        yearlyMoneyEl.textContent = formatNum(yearlyMoney) + ' zł';
-        workDaysEl.textContent = formatNum(workDays);
-        monthlyDaysEl.textContent = formatNum(monthlyDays);
-
-        // Update progress bar
-        const progressPercentage = Math.min((monthlyHoursSaved / MAX_HOURS) * 100, 100);
-        progressFill.style.width = progressPercentage + '%';
-
-        // Save to localStorage
-        const saveData = {
-            stawka: stawka,
-            tasks: tasksData
         };
-        localStorage.setItem('calcData', JSON.stringify(saveData));
-        
-        // Show toast
-        showToast('✓ Obliczenia zapisane!');
-    }
-</script>
+
+        const localeCfg = {
+            pl: { locale: "pl-PL", currency: "PLN", currencySymbol: "zł" },
+            en: { locale: "en-IE", currency: "EUR", currencySymbol: "€" }
+        };
+
+        let currentLang = localStorage.getItem("lang") || "pl";
+
+        function setLang(lang) {
+            currentLang = (lang === "en") ? "en" : "pl";
+            localStorage.setItem("lang", currentLang);
+            document.documentElement.lang = currentLang;
+
+            // highlight active button
+            document.querySelectorAll("[data-set-lang]").forEach(btn => {
+                btn.classList.toggle("active", btn.getAttribute("data-set-lang") === currentLang);
+            });
+
+            // text nodes
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                const val = i18n[currentLang][key];
+                if (typeof val === "string") {
+                    // allow <br> in a few places
+                    if (val.includes("<br>")) el.innerHTML = val;
+                    else el.textContent = val;
+                }
+            });
+
+            // placeholders
+            document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+                const key = el.getAttribute("data-i18n-placeholder");
+                const val = i18n[currentLang][key];
+                if (typeof val === "string") el.setAttribute("placeholder", val);
+            });
+
+            // also update document title (since we used data-i18n there)
+            document.title = i18n[currentLang].pageTitle;
+
+            // update error text immediately (in case it's visible)
+            const err = document.getElementById("err-stawka");
+            if (err) err.textContent = i18n[currentLang].rateError;
+
+            // update results silently if visible
+            refreshResultsIfVisible();
+        }
+
+        function formatInt(n) {
+            return new Intl.NumberFormat(localeCfg[currentLang].locale, { maximumFractionDigits: 0 }).format(n);
+        }
+
+        function formatMoney(n) {
+            // display currency nicely: "12 345 zł" / "€12,345"
+            const formatted = new Intl.NumberFormat(localeCfg[currentLang].locale, {
+                style: "currency",
+                currency: localeCfg[currentLang].currency,
+                maximumFractionDigits: 0
+            }).format(n);
+
+            // For PL we prefer "12 345 zł" instead of "12 345,00 zł" (already 0 decimals) and keep symbol after number by locale.
+            return formatted;
+        }
+
+        // ====== ORIGINAL CALC LOGIC (with small i18n hooks) ======
+
+        // Elements
+        const taskItems = document.querySelectorAll('.task-item');
+        const stawkaInput = document.getElementById('stawka');
+        const resultsSection = document.getElementById('results');
+        const emptyState = document.getElementById('empty-state');
+        const toast = document.getElementById('toast');
+
+        // Result elements
+        const monthlyHoursEl = document.getElementById('monthly-hours');
+        const yearlyHoursEl = document.getElementById('yearly-hours');
+        const yearlyMoneyEl = document.getElementById('yearly-money');
+        const workDaysEl = document.getElementById('work-days');
+        const monthlyDaysEl = document.getElementById('monthly-days');
+        const progressFill = document.getElementById('progress-fill');
+
+        // Constants
+        const SAVINGS_PERCENT = 0.9; // 90% efficiency
+        const MAX_HOURS = 60; // Max hours for progress bar scale
+
+        // Task click handling - toggle expand
+        taskItems.forEach(item => {
+            item.querySelector('.task-header').addEventListener('click', function () {
+                item.classList.toggle('active');
+            });
+
+            // Real-time calculation on input change
+            const inputs = item.querySelectorAll('.task-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    updateTaskResult(item);
+                });
+            });
+        });
+
+        // Smooth scroll for CTA
+        function scrollToPricing(e) {
+            e.preventDefault();
+            const pricingSection = document.querySelector('#pricing');
+            if (pricingSection) {
+                pricingSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Update task result display
+        function updateTaskResult(taskItem) {
+            const countInput = taskItem.querySelector('[data-field="count"]');
+            const timeInput = taskItem.querySelector('[data-field="time"]');
+            const resultEl = taskItem.querySelector('.task-result-value');
+
+            if (countInput && timeInput && resultEl) {
+                const count = parseFloat(countInput.value) || 0;
+                const time = parseFloat(timeInput.value) || 0;
+                const total = count * time;
+
+                resultEl.textContent = (total || 0).toFixed(0);
+            }
+        }
+
+        function refreshResultsIfVisible() {
+            if (!resultsSection.classList.contains("show")) return;
+
+            // silent recompute without toast
+            calculateSavings({ silent: true });
+        }
+
+        // Calculate function (optionally silent)
+        function calculateSavings(opts = {}) {
+            const silent = !!opts.silent;
+
+            // Validate hourly rate
+            const stawka = parseFloat(stawkaInput.value) || 0;
+            if (stawka < 1) {
+                document.getElementById('err-stawka').style.display = 'block';
+                if (!silent) stawkaInput.focus();
+                return;
+            } else {
+                document.getElementById('err-stawka').style.display = 'none';
+            }
+
+            // Calculate total time from active tasks
+            let totalMonthlyMinutes = 0;
+            let selectedCount = 0;
+            const tasksData = [];
+
+            taskItems.forEach(item => {
+                const isActive = item.classList.contains('active');
+                const taskName = item.dataset.task;
+
+                const countInput = item.querySelector('[data-field="count"]');
+                const timeInput = item.querySelector('[data-field="time"]');
+
+                const count = parseFloat(countInput.value) || 0;
+                const time = parseFloat(timeInput.value) || 0;
+
+                // Save task data
+                tasksData.push({
+                    name: taskName,
+                    active: isActive,
+                    count: count,
+                    time: time
+                });
+
+                // Only count if active
+                if (isActive) {
+                    selectedCount++;
+                    totalMonthlyMinutes += count * time;
+                }
+            });
+
+            // Show/hide results
+            if (selectedCount === 0) {
+                resultsSection.classList.remove('show');
+                emptyState.style.display = 'block';
+                return;
+            } else {
+                resultsSection.classList.add('show');
+                emptyState.style.display = 'none';
+            }
+
+            // Calculate savings with 90% efficiency
+            const monthlyHoursManual = totalMonthlyMinutes / 60;
+            const monthlyHoursSaved = Math.round(monthlyHoursManual * SAVINGS_PERCENT);
+            const yearlyHoursSaved = monthlyHoursSaved * 12;
+
+            // IMPORTANT: we treat input "stawka" as currency per hour for current language
+            const yearlyMoney = Math.round(yearlyHoursSaved * stawka);
+
+            const workDays = Math.round(yearlyHoursSaved / 8);
+            const monthlyDays = Math.round(monthlyHoursSaved / 8);
+
+            // Update DOM (locale-aware formatting)
+            monthlyHoursEl.textContent = formatInt(monthlyHoursSaved);
+            yearlyHoursEl.textContent = formatInt(yearlyHoursSaved);
+
+            // money
+            yearlyMoneyEl.textContent = formatMoney(yearlyMoney);
+
+            // work days with suffix translated
+            workDaysEl.textContent = `${formatInt(workDays)} ${i18n[currentLang].workDaysSuffix}`;
+            monthlyDaysEl.textContent = `${formatInt(monthlyDays)} ${i18n[currentLang].monthlyDaysSuffix}`;
+
+            // Update progress bar
+            const progressPercentage = Math.min((monthlyHoursSaved / MAX_HOURS) * 100, 100);
+            progressFill.style.width = progressPercentage + '%';
+
+            // Save to localStorage
+            const saveData = { stawka: stawka, tasks: tasksData };
+            localStorage.setItem('calcData', JSON.stringify(saveData));
+
+            // Show toast
+            if (!silent) showToast(i18n[currentLang].toastSaved);
+        }
+
+        // Load saved data from localStorage + init language
+        window.onload = () => {
+            // bind language buttons
+            document.querySelectorAll("[data-set-lang]").forEach(btn => {
+                btn.addEventListener("click", () => setLang(btn.getAttribute("data-set-lang")));
+            });
+
+            // set language early
+            setLang(currentLang);
+
+            // restore calc data
+            const saved = localStorage.getItem('calcData');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+
+                    // Restore stawka
+                    if (data.stawka) stawkaInput.value = data.stawka;
+
+                    // Restore tasks
+                    if (data.tasks) {
+                        data.tasks.forEach(taskData => {
+                            const taskItem = document.querySelector(`[data-task="${taskData.name}"]`);
+                            if (taskItem) {
+                                // Activate task
+                                if (taskData.active) taskItem.classList.add('active');
+
+                                // Restore input values
+                                const inputs = taskItem.querySelectorAll('.task-input');
+                                inputs.forEach(input => {
+                                    const field = input.dataset.field;
+                                    if (taskData[field] !== undefined) input.value = taskData[field];
+                                });
+
+                                // Update task result
+                                updateTaskResult(taskItem);
+                            }
+                        });
+                    }
+
+                    showToast(i18n[currentLang].toastLoaded);
+                } catch (e) {
+                    console.log('Error loading saved data');
+                }
+            }
+
+            // Initialize task results
+            taskItems.forEach(item => updateTaskResult(item));
+        };
+    </script>
 
 </body>
+
 </html>
