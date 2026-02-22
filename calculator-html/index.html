@@ -4,7 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="pageTitle">Kalkulator Oszczędności - Automatyzacja Księgowości</title>
+    <meta name="description"
+        content="Kalkulator oszczędności czasu dla księgowych - automatyzacja procesów księgowych z ArtWebCraft">
+    <meta name="keywords" content="automatyzacja księgowości, kalkulator oszczędności, księgowość online, ArtWebCraft">
+    <meta name="author" content="ArtWebCraft">
+    <link rel="icon" type="image/svg+xml" href="./logolew.svg">
+    <title data-i18n="pageTitle">Kalkulator Oszczędności - Automatyzacja Księgowości | ArtWebCraft</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         * {
             margin: 0;
@@ -13,150 +22,386 @@
         }
 
         :root {
-            --primary-blue: #0073b1;
-            --dark-bg: #1a1a1a;
-            --accent-cyan: #00d4ff;
-            --text-white: #ffffff;
-            --text-gray: #cccccc;
-            --card-bg: #1e1e1e;
-            --border-color: #333;
-            --success-green: #00ff88;
-            --error-red: #ff4d4d;
+            --primary-blue: #5B9FFF;
+            --primary-purple: #7B5FFF;
+            --accent-orange: #FFA726;
+            --bg-dark: #0A0E1A;
+            --bg-card: #1A1F2E;
+            --bg-card-hover: #242938;
+            --text-white: #FFFFFF;
+            --text-gray: #A0A8B8;
+            --text-muted: #6B7280;
+            --border-color: #2A3040;
+            --success-green: #10B981;
+            --error-red: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #5B9FFF 0%, #7B5FFF 100%);
+            --gradient-orange: linear-gradient(135deg, #FFA726 0%, #FF9500 100%);
+            --gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+
+        html {
+            overflow-x: hidden;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--dark-bg);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-white);
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px clamp(16px, 4vw, 50px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-white);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-blue);
         }
 
         .calc-wrapper {
-            max-width: 750px;
-            margin: 0 auto;
+            max-width: 1000px;
+            margin: 10px auto;
+            width: 100%;
+            padding: 0 clamp(16px, 4vw, 50px);
+            flex: 1;
         }
 
         .calc-container {
-            background: linear-gradient(145deg, #1e1e1e, #252525);
-            color: var(--text-white);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0, 115, 177, 0.2), 0 5px 15px rgba(0, 0, 0, 0.5);
+            background: var(--bg-card);
+            padding: 30px 40px;
+            border-radius: 24px;
             border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .calc-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 250px;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(91, 159, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(123, 95, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .calc-content {
+            position: relative;
+            z-index: 1;
         }
 
         .calc-header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 50px;
             position: relative;
+            padding-top: 14px;
         }
 
-        /* --- Language switcher --- */
         .lang-switch {
             position: absolute;
-            top: -32px;
+            top: 0;
             right: 0;
             display: flex;
             gap: 8px;
-            align-items: center;
+            background: var(--bg-dark);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
         }
 
         .lang-btn {
-            background: rgba(0, 212, 255, 0.12);
-            border: 1px solid rgba(0, 212, 255, 0.35);
-            color: var(--accent-cyan);
-            padding: 7px 12px;
-            border-radius: 999px;
+            background: transparent;
+            border: none;
+            color: var(--text-gray);
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 12px;
-            letter-spacing: .5px;
-            transition: all .2s ease;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
         }
 
         .lang-btn:hover {
-            transform: translateY(-1px);
+            color: var(--text-white);
         }
 
         .lang-btn.active {
-            background: rgba(0, 212, 255, 0.22);
-            border-color: rgba(0, 212, 255, 0.7);
-            color: #fff;
+            background: var(--gradient-primary);
+            color: var(--text-white);
         }
 
-        .calc-header h2 {
-            color: var(--accent-cyan);
-            font-size: 28px;
-            margin-bottom: 10px;
-            font-weight: 700;
+        .calc-header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
         }
 
         .calc-header p {
             color: var(--text-gray);
-            font-size: 15px;
-            line-height: 1.5;
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .tasks-section {
-            margin-bottom: 30px;
+        .header-logo-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .header-logo-text .header-text {
+            text-align: left;
+        }
+
+        .header-logo-text .header-text p {
+            margin: 0;
+        }
+
+        /* ===== RATE SECTION ===== */
+        .rate-section {
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .section-title {
             font-size: 16px;
-            color: var(--accent-cyan);
-            margin-bottom: 15px;
             font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            display: block;
+        }
+
+        .rate-input-wrapper {
+            position: relative;
+        }
+
+        .rate-input-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .rate-input {
+            width: 140px;
+            padding: 18px 24px;
+            font-size: 20px;
+            font-weight: 600;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-dark);
+            color: var(--text-white);
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+        }
+
+        .rate-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(91, 159, 255, 0.1);
+        }
+
+        .rate-currency {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            min-width: 40px;
+            text-align: left;
+        }
+
+        .rate-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .rate-error {
+            display: none;
+            color: var(--error-red);
+            font-size: 14px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* ===== TASKS SECTION ===== */
+        .tasks-section {
+            margin-bottom: 40px;
         }
 
         .task-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 16px;
         }
 
         .task-item {
-            background: rgba(0, 115, 177, 0.1);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 16px;
+            background: var(--bg-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
         }
 
         .task-item:hover {
-            border-color: var(--primary-blue);
-            background: rgba(0, 115, 177, 0.15);
+            border-color: rgba(91, 159, 255, 0.5);
+            transform: translateY(-2px);
         }
 
         .task-item.active {
-            border-color: var(--accent-cyan);
-            background: rgba(0, 212, 255, 0.15);
+            border-color: var(--primary-blue);
+            background: rgba(91, 159, 255, 0.05);
         }
 
         .task-header {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 20px;
         }
 
-        .task-icon {
-            width: 45px;
-            height: 45px;
-            background: var(--primary-blue);
-            border-radius: 10px;
+        .task-number {
+            width: 36px;
+            height: 36px;
+            background: var(--gradient-orange);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--bg-dark);
             flex-shrink: 0;
-            transition: all 0.3s ease;
+            box-shadow:
+                0 0 8px rgba(255, 167, 38, 0.8),
+                0 0 20px rgba(255, 167, 38, 0.5),
+                0 0 40px rgba(255, 167, 38, 0.25);
+            animation: numberGlow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes numberGlow {
+
+            0%,
+            100% {
+                box-shadow:
+                    0 0 8px rgba(255, 167, 38, 0.8),
+                    0 0 20px rgba(255, 167, 38, 0.5),
+                    0 0 40px rgba(255, 167, 38, 0.25);
+            }
+
+            50% {
+                box-shadow:
+                    0 0 14px rgba(255, 167, 38, 1),
+                    0 0 30px rgba(255, 167, 38, 0.75),
+                    0 0 60px rgba(255, 167, 38, 0.45);
+            }
+        }
+
+        .task-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(145deg, #1a2240, #0d1120);
+            border: 1px solid rgba(91, 159, 255, 0.4);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            transition: all 0.3s;
+            box-shadow:
+                0 0 10px rgba(91, 159, 255, 0.55),
+                0 0 24px rgba(91, 159, 255, 0.25),
+                inset 0 0 10px rgba(91, 159, 255, 0.08);
+            animation: iconGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes iconGlow {
+
+            0%,
+            100% {
+                box-shadow:
+                    0 0 10px rgba(91, 159, 255, 0.55),
+                    0 0 24px rgba(91, 159, 255, 0.25),
+                    inset 0 0 10px rgba(91, 159, 255, 0.08);
+            }
+
+            50% {
+                box-shadow:
+                    0 0 18px rgba(91, 159, 255, 0.9),
+                    0 0 38px rgba(91, 159, 255, 0.5),
+                    inset 0 0 16px rgba(91, 159, 255, 0.15);
+            }
         }
 
         .task-item.active .task-icon {
-            background: var(--accent-cyan);
             transform: scale(1.1);
+            box-shadow:
+                0 0 20px rgba(91, 159, 255, 1),
+                0 0 45px rgba(91, 159, 255, 0.65),
+                0 4px 24px rgba(91, 159, 255, 0.4),
+                inset 0 0 20px rgba(91, 159, 255, 0.2);
+            animation: none;
         }
 
         .task-text {
@@ -164,21 +409,22 @@
         }
 
         .task-title {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
             margin-bottom: 4px;
             color: var(--text-white);
         }
 
         .task-desc {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--text-gray);
         }
 
         .task-expand-icon {
-            font-size: 20px;
-            color: var(--accent-cyan);
-            transition: transform 0.3s ease;
+            font-size: 24px;
+            color: var(--primary-blue);
+            transition: transform 0.3s;
+            font-weight: 700;
         }
 
         .task-item.active .task-expand-icon {
@@ -188,353 +434,789 @@
         .task-details {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.4s ease, margin-top 0.4s ease;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             margin-top: 0;
         }
 
         .task-item.active .task-details {
             max-height: 500px;
-            margin-top: 15px;
+            margin-top: 24px;
         }
 
         .task-inputs {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-cyan);
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 16px;
+            border-left: 4px solid var(--primary-blue);
         }
 
         .input-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 16px;
+            margin-bottom: 16px;
         }
 
         .input-row:last-child {
             margin-bottom: 0;
         }
 
-        .task-input-group {
-            margin-bottom: 12px;
-        }
-
-        .task-input-group:last-child {
-            margin-bottom: 0;
-        }
-
         .task-input-group label {
             display: block;
-            font-size: 12px;
-            color: var(--text-gray);
-            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .task-input-group input {
             width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #444;
-            background: #111;
-            color: white;
-            font-size: 15px;
-            transition: border 0.3s;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background: var(--bg-dark);
+            color: var(--text-white);
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
         }
 
         .task-input-group input:focus {
-            border-color: var(--accent-cyan);
             outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(91, 159, 255, 0.1);
         }
 
         .task-result {
-            margin-top: 12px;
-            padding: 10px;
-            background: rgba(0, 212, 255, 0.1);
-            border-radius: 6px;
-            text-align: center;
-            font-size: 13px;
-            color: var(--accent-cyan);
-            font-weight: 600;
-        }
-
-        .input-section {
-            margin-bottom: 30px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            border-radius: 12px;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        .input-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .input-group label {
-            display: block;
-            font-size: 13px;
-            color: var(--text-gray);
-            margin-bottom: 8px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            background: #111;
-            color: white;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
-
-        .input-group input:focus {
-            border-color: var(--accent-cyan);
-            outline: none;
-        }
-
-        .error {
-            color: var(--error-red);
-            font-size: 12px;
-            margin-top: 4px;
-            display: none;
-        }
-
-        .calc-btn {
-            width: 100%;
+            margin-top: 16px;
             padding: 16px;
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 17px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            background: rgba(91, 159, 255, 0.1);
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(91, 159, 255, 0.2);
+        }
+
+        .task-result-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 20px;
+        }
+
+        .task-result-value {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ===== CALC BUTTON ===== */
+        .calc-btn {
+            display: block;
+            margin: 0 auto;
+            width: auto;
+            min-width: 260px;
+            max-width: 420px;
+            padding: 18px 40px;
+            background: var(--gradient-orange);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 20px rgba(255, 167, 38, 0.3);
+            font-family: 'Inter', sans-serif;
         }
 
         .calc-btn:hover {
-            background: #005a8a;
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 115, 177, 0.4);
+            box-shadow: 0 8px 30px rgba(255, 167, 38, 0.4);
         }
 
-        .calc-btn:disabled {
-            background: #333;
-            cursor: not-allowed;
-            transform: none;
+        .calc-btn:active {
+            transform: translateY(0);
         }
 
-        .results-section {
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px 56px;
+            color: var(--text-gray);
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            line-height: 1.8;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* ===== FUTURISTIC 3D CLOCK ===== */
+        .clock-wrap {
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 32px;
+            perspective: 700px;
+            position: relative;
+        }
+
+        .clock-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(91, 159, 255, 0.18) 0%, transparent 70%);
+            animation: clockGlowPulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes clockGlowPulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(0.95);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.08);
+            }
+        }
+
+        .clock-face {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background:
+                radial-gradient(circle at 32% 28%, rgba(91, 159, 255, 0.22) 0%, transparent 55%),
+                radial-gradient(circle at 72% 72%, rgba(123, 95, 255, 0.14) 0%, transparent 45%),
+                linear-gradient(145deg, #141a2e 0%, #0a0e1a 100%);
+            border: 2px solid rgba(91, 159, 255, 0.55);
+            box-shadow:
+                0 0 24px rgba(91, 159, 255, 0.35),
+                0 0 60px rgba(91, 159, 255, 0.15),
+                0 0 100px rgba(91, 159, 255, 0.06),
+                inset 0 0 24px rgba(91, 159, 255, 0.08);
+            position: relative;
+            transform-style: preserve-3d;
+            animation: clockFloat 5s ease-in-out infinite;
+        }
+
+        @keyframes clockFloat {
+            0% {
+                transform: rotateX(18deg) rotateY(-18deg) translateY(0px);
+            }
+
+            25% {
+                transform: rotateX(6deg) rotateY(16deg) translateY(-6px);
+            }
+
+            50% {
+                transform: rotateX(-12deg) rotateY(8deg) translateY(-10px);
+            }
+
+            75% {
+                transform: rotateX(10deg) rotateY(-8deg) translateY(-4px);
+            }
+
+            100% {
+                transform: rotateX(18deg) rotateY(-18deg) translateY(0px);
+            }
+        }
+
+        /* Hour ticks */
+        .clock-tick {
+            position: absolute;
+            width: 2px;
+            height: 8px;
+            background: rgba(91, 159, 255, 0.4);
+            border-radius: 2px;
+            top: 8px;
+            left: calc(50% - 1px);
+            transform-origin: center 72px;
+        }
+
+        .clock-tick:nth-child(3n+1) {
+            width: 3px;
+            height: 13px;
+            background: rgba(91, 159, 255, 0.85);
+            top: 6px;
+            left: calc(50% - 1.5px);
+            box-shadow: 0 0 6px rgba(91, 159, 255, 0.8);
+        }
+
+        /* Clock hands */
+        .clock-hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 4px 4px 2px 2px;
+        }
+
+        .hand-hour {
+            width: 5px;
+            height: 38px;
+            margin-left: -2.5px;
+            background: linear-gradient(to top, #5B9FFF, #7B5FFF);
+            box-shadow: 0 0 10px rgba(91, 159, 255, 0.9);
+            animation: rotateHour 43200s linear infinite;
+        }
+
+        .hand-minute {
+            width: 3px;
+            height: 52px;
+            margin-left: -1.5px;
+            background: linear-gradient(to top, #7B5FFF, #a78bfa);
+            box-shadow: 0 0 8px rgba(123, 95, 255, 0.9);
+            animation: rotateMinute 3600s linear infinite;
+        }
+
+        .hand-second {
+            width: 2px;
+            height: 58px;
+            margin-left: -1px;
+            background: linear-gradient(to top, #FFA726, #FFD54F);
+            box-shadow: 0 0 8px rgba(255, 167, 38, 1), 0 0 16px rgba(255, 167, 38, 0.5);
+            animation: rotateSecond 60s linear infinite;
+        }
+
+        @keyframes rotateHour {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rotateMinute {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rotateSecond {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .clock-center {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #FFD54F, #FFA726);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 14px rgba(255, 167, 38, 1), 0 0 28px rgba(255, 167, 38, 0.5);
+            z-index: 10;
+        }
+
+        /* Scanning line effect */
+        .clock-scan {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(91, 159, 255, 0.7));
+            transform-origin: left center;
+            transform: rotate(0deg);
+            animation: clockScan 4s linear infinite;
+            border-radius: 2px;
+        }
+
+        @keyframes clockScan {
+            from {
+                transform: rotate(0deg);
+                opacity: 0.8;
+            }
+
+            to {
+                transform: rotate(360deg);
+                opacity: 0.8;
+            }
+        }
+
+        /* ===== RESULTS ===== */
+        .results-container {
             opacity: 0;
             max-height: 0;
             overflow: hidden;
-            transition: all 0.5s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 0;
         }
 
-        .results-section.show {
+        .results-container.show {
             opacity: 1;
-            max-height: 1500px;
-            margin-top: 30px;
+            max-height: 3000px;
+            margin-top: 40px;
         }
 
-        .results-card {
-            background: linear-gradient(135deg, rgba(0, 115, 177, 0.2), rgba(0, 212, 255, 0.2));
-            border-left: 4px solid var(--accent-cyan);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
+        /* Summary banner */
+        .summary-banner {
+            background: var(--bg-dark);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 28px 32px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
         }
 
+        .summary-banner-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .summary-banner-value {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .summary-banner-item {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .summary-divider {
+            width: 1px;
+            height: 60px;
+            background: var(--border-color);
+            flex-shrink: 0;
+        }
+
+        /* Results Grid */
         .results-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 28px;
         }
 
-        .result-box {
+        .result-card {
+            background: var(--bg-dark);
+            padding: 28px;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
             text-align: center;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .result-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-blue);
         }
 
         .result-label {
-            font-size: 12px;
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--text-gray);
-            margin-bottom: 8px;
+            font-weight: 600;
         }
 
         .result-value {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--accent-cyan);
-            line-height: 1;
+            font-size: 40px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
         }
 
-        .result-unit {
+        .result-sublabel {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .result-card.highlight {
+            background: rgba(16, 185, 129, 0.05);
+            border-color: var(--success-green);
+        }
+
+        .result-card.highlight .result-value {
+            background: var(--gradient-success);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Disclaimer box */
+        .disclaimer-box {
+            background: rgba(255, 167, 38, 0.07);
+            border: 1px solid rgba(255, 167, 38, 0.25);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .disclaimer-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+
+        .disclaimer-text {
             font-size: 14px;
             color: var(--text-gray);
-            margin-top: 5px;
+            line-height: 1.7;
         }
 
-        .result-sub {
-            font-size: 16px;
-            color: var(--text-gray);
-            margin: 10px 0;
-            text-align: center;
+        .disclaimer-text strong {
+            color: var(--accent-orange);
         }
 
-        .result-sub strong {
-            color: var(--accent-cyan);
-            font-size: 18px;
-        }
-
+        /* Progress Bar */
         .progress-container {
-            margin: 20px 0;
+            background: var(--bg-dark);
+            border-radius: 20px;
+            padding: 28px;
+            border: 2px solid var(--border-color);
+            margin-bottom: 28px;
         }
 
-        .progress-label {
-            font-size: 13px;
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .progress-title {
+            font-size: 14px;
             color: var(--text-gray);
-            margin-bottom: 8px;
-            text-align: center;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-percentage {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-blue);
         }
 
         .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
+            height: 16px;
+            background: rgba(91, 159, 255, 0.1);
+            border-radius: 12px;
             overflow: hidden;
-            position: relative;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-blue), var(--accent-cyan));
-            border-radius: 10px;
-            transition: width 0.8s ease;
-            width: 0%;
-            box-shadow: 0 0 15px rgba(0, 212, 255, 0.6);
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px rgba(91, 159, 255, 0.5);
         }
 
-        .result-highlight {
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid var(--success-green);
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .result-highlight p {
-            font-size: 15px;
-            color: var(--text-white);
-            margin-bottom: 5px;
-        }
-
-        .result-highlight strong {
-            font-size: 20px;
-            color: var(--success-green);
-        }
-
-        .efficiency-badge {
-            display: inline-block;
-            background: rgba(0, 255, 136, 0.2);
-            color: var(--success-green);
-            padding: 8px 16px;
+        /* Breakdown table */
+        .breakdown-container {
+            background: var(--bg-dark);
             border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 10px;
-            border: 1px solid var(--success-green);
+            padding: 28px;
+            border: 2px solid var(--border-color);
+            margin-bottom: 28px;
         }
 
+        .breakdown-title {
+            font-size: 14px;
+            color: var(--text-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            gap: 12px;
+        }
+
+        .breakdown-row:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-task {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-white);
+        }
+
+        .breakdown-task-icon {
+            font-size: 20px;
+        }
+
+        .breakdown-minutes {
+            font-size: 14px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .breakdown-hours {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            white-space: nowrap;
+        }
+
+        /* CTA Section */
         .cta-section {
+            background: var(--bg-dark);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
             text-align: center;
-            margin-top: 25px;
+        }
+
+        .cta-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
         }
 
         .cta-text {
-            font-size: 15px;
             color: var(--text-gray);
-            margin-bottom: 15px;
-            font-style: italic;
+            margin-bottom: 28px;
+            line-height: 1.8;
+            font-size: 16px;
         }
 
         .cta-button {
             display: inline-block;
-            padding: 16px 40px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
-            color: white;
+            padding: 16px 48px;
+            background: var(--gradient-orange);
+            color: var(--bg-dark);
             text-decoration: none;
-            border-radius: 50px;
-            font-size: 16px;
+            border-radius: 12px;
             font-weight: 700;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+            font-size: 16px;
+            transition: all 0.3s;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 20px rgba(255, 167, 38, 0.3);
         }
 
         .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 167, 38, 0.4);
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-gray);
-        }
-
-        .empty-state-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        .empty-state p {
-            font-size: 15px;
-        }
-
+        /* Toast */
         .toast {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 212, 255, 0.95);
-            color: #000;
-            padding: 15px 25px;
-            border-radius: 10px;
+            bottom: 30px;
+            right: 30px;
+            background: var(--gradient-primary);
+            color: var(--text-white);
+            padding: 16px 28px;
+            border-radius: 12px;
             font-weight: 600;
-            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.5);
+            box-shadow: 0 8px 30px rgba(91, 159, 255, 0.5);
             opacity: 0;
-            transform: translateX(400px);
-            transition: all 0.3s ease;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 1000;
         }
 
         .toast.show {
             opacity: 1;
-            transform: translateX(0);
+            transform: translateY(0);
         }
 
-        @media (max-width: 600px) {
-            .calc-container {
-                padding: 30px 20px;
+        /* Footer */
+        .footer {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px clamp(16px, 4vw, 50px) 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-main {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .footer-tagline {
+            color: var(--text-gray);
+            font-size: 13px;
+        }
+
+        .footer-nav {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .footer-contact {
+            color: var(--text-gray);
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .footer-contact a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-contact a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-copyright {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .img {
+            width: auto;
+            height: 60px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
             }
 
-            .calc-header h2 {
-                font-size: 24px;
+            .header {
+                padding: 12px 16px;
+            }
+
+            .calc-container {
+                padding: 24px 16px;
+            }
+
+            .calc-header {
+                margin-bottom: 32px;
+            }
+
+            .lang-switch {
+                position: static;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+
+            .calc-header {
+                padding-top: 0;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .header-logo-text {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .header-logo-text img {
+                width: 100px;
+                height: 100px;
+            }
+
+            .header-logo-text .header-text {
+                text-align: center;
+            }
+
+            .header-logo-text .header-text p {
+                margin: 0 auto;
+            }
+
+            .calc-header h1 {
+                font-size: 26px;
+            }
+
+            .calc-header p {
+                font-size: 15px;
+            }
+
+            .task-header {
+                gap: 12px;
+            }
+
+            .task-icon {
+                width: 44px;
+                height: 44px;
+                font-size: 22px;
+            }
+
+            .task-title {
+                font-size: 16px;
+            }
+
+            .task-inputs {
+                padding: 16px;
+            }
+
+            .input-row {
+                grid-template-columns: 1fr;
             }
 
             .results-grid {
@@ -542,708 +1224,914 @@
             }
 
             .result-value {
-                font-size: 28px;
+                font-size: 32px;
             }
 
-            .task-grid {
-                gap: 10px;
+            .cta-section {
+                padding: 24px 16px;
             }
 
-            .task-item {
-                padding: 12px;
+            .cta-title {
+                font-size: 24px;
             }
 
             .cta-button {
-                padding: 14px 30px;
-                font-size: 14px;
+                display: block;
+                text-align: center;
+                padding: 14px 24px;
             }
 
-            .input-row {
-                grid-template-columns: 1fr;
+            .footer {
+                padding: 24px 16px;
             }
 
-            .lang-switch {
-                top: -18px;
-            }
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+            .footer-main {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 20px;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .footer-brand {
+                align-items: center;
             }
-        }
 
-        .results-section.show .results-card {
-            animation: slideIn 0.5s ease;
+            .footer-nav {
+                justify-content: center;
+                gap: 24px;
+            }
+
+            .footer-contact {
+                text-align: center;
+            }
+
+            .summary-banner {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .summary-divider {
+                display: none;
+            }
+
+            .rate-input-row {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 
 <body>
+    <div class="header"></div>
 
     <div class="calc-wrapper">
         <div class="calc-container">
+            <canvas id="particles-canvas"></canvas>
 
-            <!-- Header -->
-            <div class="calc-header">
-
-                <!-- Language Switcher -->
-                <div class="lang-switch" aria-label="Language switch">
-                    <button class="lang-btn" type="button" data-set-lang="en">EN</button>
-                    <button class="lang-btn" type="button" data-set-lang="pl">PL</button>
+            <div class="calc-content">
+                <div class="calc-header">
+                    <div class="lang-switch">
+                        <button class="lang-btn" data-set-lang="en">EN</button>
+                        <button class="lang-btn active" data-set-lang="pl">PL</button>
+                    </div>
+                    <div class="header-logo-text">
+                        <img src="./logo_accounting.png" alt="ArtWebCraft logo" style="width:200px;height:200px;" />
+                        <div class="header-text">
+                            <h1 data-i18n="title">Kalkulator Oszczędności</h1>
+                            <p data-i18n="subtitle">Sprawdź ile zaoszczędzisz dzięki automatyzacji księgowości</p>
+                        </div>
+                    </div>
                 </div>
 
-                <h2 data-i18n="headerTitle">💡 Ile Czasu i Pieniędzy Możesz Odzyskać?</h2>
-                <p data-i18n="headerSubtitle">Sprawdź, ile zaoszczędzisz dzięki automatyzacji powtarzalnych zadań w
-                    Twoim biurze</p>
-            </div>
-
-            <!-- Tasks Section -->
-            <div class="tasks-section">
-                <div class="section-title" data-i18n="tasksSectionTitle">📋 Kliknij zadania i wprowadź swoje dane</div>
-
-                <div class="task-grid">
-
-                    <!-- Task 1: Przypomnienia -->
-                    <div class="task-item" data-task="przypomnienia">
-                        <div class="task-header">
-                            <div class="task-icon">📧</div>
-                            <div class="task-text">
-                                <div class="task-title" data-i18n="task1Title">Przypomnienia o dokumentach</div>
-                                <div class="task-desc" data-i18n="task1Desc">Automatyczne maile o brakujących fakturach,
-                                    umowach, PIT-ach</div>
-                            </div>
-                            <div class="task-expand-icon">▼</div>
+                <!-- Rate Input -->
+                <div class="rate-section">
+                    <label class="section-title" for="stawka" data-i18n="rateLabel">
+                        Twoja stawka godzinowa
+                    </label>
+                    <div class="rate-input-wrapper">
+                        <div class="rate-input-row">
+                            <input type="number" id="stawka" class="rate-input" placeholder="150" min="1">
+                            <span class="rate-currency" id="rate-currency">zł</span>
                         </div>
-
-                        <div class="task-details">
-                            <div class="task-inputs">
-                                <div class="input-row">
-                                    <div class="task-input-group">
-                                        <label data-i18n="labelClients">Liczba klientów:</label>
-                                        <input type="number" class="task-input" data-field="count"
-                                            data-i18n-placeholder="phExample80" placeholder="np. 80" value="80" min="0">
-                                    </div>
-                                    <div class="task-input-group">
-                                        <label data-i18n="labelReminderTime">Czas na przypomnienie (min):</label>
-                                        <input type="number" class="task-input" data-field="time"
-                                            data-i18n-placeholder="phExample6" placeholder="np. 6" value="6" min="0">
-                                    </div>
-                                </div>
-                                <div class="task-result">
-                                    <span data-i18n="monthlyPrefix">Miesięcznie:</span>
-                                    <span class="task-result-value">0</span>
-                                    <span data-i18n="minutesShort">min</span>
-                                </div>
-                            </div>
+                        <div class="rate-hint" data-i18n="rateHint">Wpisz ile zarabiasz za godzinę swojej pracy (brutto
+                            lub netto — ważne, żeby być konsekwentnym)</div>
+                        <div class="rate-error" id="err-stawka" data-i18n="rateError">
+                            Proszę podać poprawną stawkę godzinową (min. 1)
                         </div>
                     </div>
-
-                    <!-- Task 2: Faktury cykliczne -->
-                    <div class="task-item" data-task="faktury">
-                        <div class="task-header">
-                            <div class="task-icon">📄</div>
-                            <div class="task-text">
-                                <div class="task-title" data-i18n="task2Title">Faktury cykliczne</div>
-                                <div class="task-desc" data-i18n="task2Desc">Automatyczne generowanie i wysyłka faktur
-                                    abonamentowych</div>
-                            </div>
-                            <div class="task-expand-icon">▼</div>
-                        </div>
-
-                        <div class="task-details">
-                            <div class="task-inputs">
-                                <div class="input-row">
-                                    <div class="task-input-group">
-                                        <label data-i18n="labelInvoicesPerMonth">Liczba faktur/mc:</label>
-                                        <input type="number" class="task-input" data-field="count"
-                                            data-i18n-placeholder="phExample150" placeholder="np. 150" value="150"
-                                            min="0">
-                                    </div>
-                                    <div class="task-input-group">
-                                        <label data-i18n="labelInvoiceTime">Czas na fakturę (min):</label>
-                                        <input type="number" class="task-input" data-field="time"
-                                            data-i18n-placeholder="phExample4" placeholder="np. 4" value="4" min="0">
-                                    </div>
-                                </div>
-                                <div class="task-result">
-                                    <span data-i18n="monthlyPrefix">Miesięcznie:</span>
-                                    <span class="task-result-value">0</span>
-                                    <span data-i18n="minutesShort">min</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Task 3: Follow-up płatności -->
-                    <div class="task-item" data-task="followup">
-                        <div class="task-header">
-                            <div class="task-icon">💬</div>
-                            <div class="task-text">
-                                <div class="task-title" data-i18n="task3Title">Follow-up płatności</div>
-                                <div class="task-desc" data-i18n="task3Desc">Przypomnienia o nieopłaconych fakturach,
-                                    eskalacje</div>
-                            </div>
-                            <div class="task-expand-icon">▼</div>
-                        </div>
-
-                        <div class="task-details">
-                            <div class="task-inputs">
-                                <div class="input-row">
-                                    <div class="task-input-group">
-                                        <label data-i18n="labelFollowupsPerMonth">Liczba follow-upów/mc:</label>
-                                        <input type="number" class="task-input" data-field="count"
-                                            data-i18n-placeholder="phExample60" placeholder="np. 60" value="60" min="0">
-                                    </div>
-                                    <div class="task-input-group">
-                                        <label data-i18n="labelFollowupTime">Czas na follow-up (min):</label>
-                                        <input type="number" class="task-input" data-field="time"
-                                            data-i18n-placeholder="phExample5" placeholder="np. 5" value="5" min="0">
-                                    </div>
-                                </div>
-                                <div class="task-result">
-                                    <span data-i18n="monthlyPrefix">Miesięcznie:</span>
-                                    <span class="task-result-value">0</span>
-                                    <span data-i18n="minutesShort">min</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Task 4: Monitorowanie terminów -->
-                    <div class="task-item" data-task="podatki">
-                        <div class="task-header">
-                            <div class="task-icon">📊</div>
-                            <div class="task-text">
-                                <div class="task-title" data-i18n="task4Title">Monitorowanie terminów</div>
-                                <div class="task-desc" data-i18n="task4Desc">Automatyczne powiadomienia o terminach VAT,
-                                    ZUS, JPK</div>
-                            </div>
-                            <div class="task-expand-icon">▼</div>
-                        </div>
-
-                        <div class="task-details">
-                            <div class="task-inputs">
-                                <div class="input-row">
-                                    <div class="task-input-group">
-                                        <label data-i18n="labelClients">Liczba klientów:</label>
-                                        <input type="number" class="task-input" data-field="count"
-                                            data-i18n-placeholder="phExample80" placeholder="np. 80" value="80" min="0">
-                                    </div>
-                                    <div class="task-input-group">
-                                        <label data-i18n="labelMonitoringTime">Czas monitorowania (min):</label>
-                                        <input type="number" class="task-input" data-field="time"
-                                            data-i18n-placeholder="phExample3" placeholder="np. 3" value="3" min="0">
-                                    </div>
-                                </div>
-                                <div class="task-result">
-                                    <span data-i18n="monthlyPrefix">Miesięcznie:</span>
-                                    <span class="task-result-value">0</span>
-                                    <span data-i18n="minutesShort">min</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Global Input Section -->
-            <div class="input-section">
-                <div class="section-title" data-i18n="rateSectionTitle">💰 Twoja stawka</div>
-
-                <div class="input-group">
-                    <label for="stawka" data-i18n="rateLabel">Średnia stawka godzinowa pracownika (zł/h):</label>
-                    <input type="number" id="stawka" data-i18n-placeholder="phExample100" placeholder="np. 100"
-                        value="100" min="1" step="5">
-                    <div class="error" id="err-stawka" data-i18n="rateError">Wprowadź stawkę ≥ 1 zł</div>
                 </div>
 
-                <button class="calc-btn" onclick="calculateSavings()" data-i18n="calcButton">Oblicz
-                    Oszczędności</button>
-            </div>
+                <!-- Tasks Section -->
+                <div class="tasks-section">
+                    <h3 class="section-title" data-i18n="tasksTitle">Wybierz zadania do automatyzacji</h3>
+                    <div class="task-grid">
 
-            <!-- Results Section -->
-            <div class="results-section" id="results">
-                <div class="results-card">
+                        <!-- Task 1: Przetwarzanie faktur -->
+                        <div class="task-item" data-task="invoices" data-icon="📄">
+                            <div class="task-header">
+                                <div class="task-number">01</div>
+                                <div class="task-icon">📄</div>
+                                <div class="task-text">
+                                    <div class="task-title" data-i18n="task1Title">Przetwarzanie faktur</div>
+                                    <div class="task-desc" data-i18n="task1Desc">Ręczne weryfikowanie i księgowanie
+                                        faktur kosztowych</div>
+                                </div>
+                                <div class="task-expand-icon">▼</div>
+                            </div>
+                            <div class="task-details">
+                                <div class="task-inputs">
+                                    <div class="input-row">
+                                        <div class="task-input-group">
+                                            <label data-i18n="countLabel">Liczba miesięcznie</label>
+                                            <input type="number" class="task-input" data-field="count" value="0"
+                                                min="0">
+                                        </div>
+                                        <div class="task-input-group">
+                                            <label data-i18n="timeLabel">Czas / szt. (minuty)</label>
+                                            <input type="number" class="task-input" data-field="time" value="5" min="1">
+                                        </div>
+                                    </div>
+                                    <div class="task-result">
+                                        <div class="task-result-label" data-i18n="totalTime">Łączny czas:</div>
+                                        <div class="task-result-value">0</div>
+                                        <div class="task-result-label" data-i18n="minutesMonth">minut / miesiąc</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task 2: Zarządzanie emailami -->
+                        <div class="task-item" data-task="emails" data-icon="📧">
+                            <div class="task-header">
+                                <div class="task-number">02</div>
+                                <div class="task-icon">📧</div>
+                                <div class="task-text">
+                                    <div class="task-title" data-i18n="task2Title">Zarządzanie emailami</div>
+                                    <div class="task-desc" data-i18n="task2Desc">Segregacja korespondencji i pisanie
+                                        odpowiedzi</div>
+                                </div>
+                                <div class="task-expand-icon">▼</div>
+                            </div>
+                            <div class="task-details">
+                                <div class="task-inputs">
+                                    <div class="input-row">
+                                        <div class="task-input-group">
+                                            <label data-i18n="countLabel">Liczba miesięcznie</label>
+                                            <input type="number" class="task-input" data-field="count" value="0"
+                                                min="0">
+                                        </div>
+                                        <div class="task-input-group">
+                                            <label data-i18n="timeLabel">Czas / szt. (minuty)</label>
+                                            <input type="number" class="task-input" data-field="time" value="3" min="1">
+                                        </div>
+                                    </div>
+                                    <div class="task-result">
+                                        <div class="task-result-label" data-i18n="totalTime">Łączny czas:</div>
+                                        <div class="task-result-value">0</div>
+                                        <div class="task-result-label" data-i18n="minutesMonth">minut / miesiąc</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task 3: Generowanie raportów -->
+                        <div class="task-item" data-task="reports" data-icon="📊">
+                            <div class="task-header">
+                                <div class="task-number">03</div>
+                                <div class="task-icon">📊</div>
+                                <div class="task-text">
+                                    <div class="task-title" data-i18n="task3Title">Generowanie raportów</div>
+                                    <div class="task-desc" data-i18n="task3Desc">Tworzenie zestawień i raportów
+                                        miesięcznych</div>
+                                </div>
+                                <div class="task-expand-icon">▼</div>
+                            </div>
+                            <div class="task-details">
+                                <div class="task-inputs">
+                                    <div class="input-row">
+                                        <div class="task-input-group">
+                                            <label data-i18n="countLabel">Liczba miesięcznie</label>
+                                            <input type="number" class="task-input" data-field="count" value="0"
+                                                min="0">
+                                        </div>
+                                        <div class="task-input-group">
+                                            <label data-i18n="timeLabel">Czas / szt. (minuty)</label>
+                                            <input type="number" class="task-input" data-field="time" value="30"
+                                                min="1">
+                                        </div>
+                                    </div>
+                                    <div class="task-result">
+                                        <div class="task-result-label" data-i18n="totalTime">Łączny czas:</div>
+                                        <div class="task-result-value">0</div>
+                                        <div class="task-result-label" data-i18n="minutesMonth">minut / miesiąc</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task 4: Uzgadnianie wyciągów bankowych (NOWE - zastąpiono duplikat) -->
+                        <div class="task-item" data-task="reconciliation" data-icon="🏦">
+                            <div class="task-header">
+                                <div class="task-number">04</div>
+                                <div class="task-icon">🏦</div>
+                                <div class="task-text">
+                                    <div class="task-title" data-i18n="task4Title">Uzgadnianie wyciągów bankowych</div>
+                                    <div class="task-desc" data-i18n="task4Desc">Ręczne dopasowywanie operacji bankowych
+                                        do zapisów</div>
+                                </div>
+                                <div class="task-expand-icon">▼</div>
+                            </div>
+                            <div class="task-details">
+                                <div class="task-inputs">
+                                    <div class="input-row">
+                                        <div class="task-input-group">
+                                            <label data-i18n="countLabel">Liczba miesięcznie</label>
+                                            <input type="number" class="task-input" data-field="count" value="0"
+                                                min="0">
+                                        </div>
+                                        <div class="task-input-group">
+                                            <label data-i18n="timeLabel">Czas / szt. (minuty)</label>
+                                            <input type="number" class="task-input" data-field="time" value="20"
+                                                min="1">
+                                        </div>
+                                    </div>
+                                    <div class="task-result">
+                                        <div class="task-result-label" data-i18n="totalTime">Łączny czas:</div>
+                                        <div class="task-result-value">0</div>
+                                        <div class="task-result-label" data-i18n="minutesMonth">minut / miesiąc</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Task 5: Komunikacja z klientami -->
+                        <div class="task-item" data-task="communication" data-icon="💬">
+                            <div class="task-header">
+                                <div class="task-number">05</div>
+                                <div class="task-icon">💬</div>
+                                <div class="task-text">
+                                    <div class="task-title" data-i18n="task5Title">Komunikacja z klientami</div>
+                                    <div class="task-desc" data-i18n="task5Desc">Ręczne wysyłanie przypomnień i
+                                        powiadomień</div>
+                                </div>
+                                <div class="task-expand-icon">▼</div>
+                            </div>
+                            <div class="task-details">
+                                <div class="task-inputs">
+                                    <div class="input-row">
+                                        <div class="task-input-group">
+                                            <label data-i18n="countLabel">Liczba miesięcznie</label>
+                                            <input type="number" class="task-input" data-field="count" value="0"
+                                                min="0">
+                                        </div>
+                                        <div class="task-input-group">
+                                            <label data-i18n="timeLabel">Czas / szt. (minuty)</label>
+                                            <input type="number" class="task-input" data-field="time" value="5" min="1">
+                                        </div>
+                                    </div>
+                                    <div class="task-result">
+                                        <div class="task-result-label" data-i18n="totalTime">Łączny czas:</div>
+                                        <div class="task-result-value">0</div>
+                                        <div class="task-result-label" data-i18n="minutesMonth">minut / miesiąc</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Calculate Button -->
+                <button class="calc-btn" onclick="calculateSavings()" data-i18n="calculateBtn">
+                    🚀 Oblicz Oszczędności
+                </button>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state">
+                    <div class="clock-wrap">
+                        <div class="clock-face" id="clock-face">
+                            <!-- 12 tick marks -->
+                            <div class="clock-tick" style="transform:rotate(0deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(30deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(60deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(90deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(120deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(150deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(180deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(210deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(240deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(270deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(300deg)"></div>
+                            <div class="clock-tick" style="transform:rotate(330deg)"></div>
+                            <!-- Hands (set by JS to current time) -->
+                            <div class="clock-hand hand-hour" id="hand-hour"></div>
+                            <div class="clock-hand hand-minute" id="hand-minute"></div>
+                            <div class="clock-hand hand-second" id="hand-second"></div>
+                            <div class="clock-scan"></div>
+                            <div class="clock-center"></div>
+                        </div>
+                    </div>
+                    <p class="empty-state-text" data-i18n="emptyState">
+                        Rozwiń zadania, które chcesz zautomatyzować, wpisz liczby i sprawdź ile możesz zyskać!
+                    </p>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-container" id="results">
+
+                    <!-- Summary banner: monthly minutes + hours + value -->
+                    <div class="summary-banner" id="summary-banner">
+                        <div class="summary-banner-item">
+                            <div class="summary-banner-label" data-i18n="summaryMinutesLabel">Miesięcznie tracisz</div>
+                            <div class="summary-banner-value" id="summary-minutes">0</div>
+                            <div class="summary-banner-label" data-i18n="summaryMinutesUnit">minut</div>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-banner-item">
+                            <div class="summary-banner-label" data-i18n="summaryHoursLabel">czyli</div>
+                            <div class="summary-banner-value" id="summary-hours">0</div>
+                            <div class="summary-banner-label" data-i18n="summaryHoursUnit">godzin</div>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-banner-item">
+                            <div class="summary-banner-label" data-i18n="summaryValueLabel">o wartości</div>
+                            <div class="summary-banner-value" id="summary-value">0</div>
+                            <div class="summary-banner-label" data-i18n="summaryValueUnit">miesięcznie</div>
+                        </div>
+                    </div>
+
+                    <!-- Task breakdown -->
+                    <div class="breakdown-container" id="breakdown-container">
+                        <div class="breakdown-title" data-i18n="breakdownTitle">Rozkład według zadań</div>
+                        <div id="breakdown-rows"></div>
+                    </div>
+
+                    <!-- Main results grid -->
                     <div class="results-grid">
-                        <div class="result-box">
-                            <div class="result-label" data-i18n="monthlyLabel">Miesięcznie</div>
+                        <div class="result-card">
+                            <div class="result-label" data-i18n="monthlyHoursLabel">Miesięcznie odzyskujesz</div>
                             <div class="result-value" id="monthly-hours">0</div>
-                            <div class="result-unit" data-i18n="hoursUnit">godzin</div>
+                            <div class="result-sublabel" data-i18n="hoursUnit">godzin</div>
                         </div>
-                        <div class="result-box">
-                            <div class="result-label" data-i18n="yearlyLabel">Rocznie</div>
+
+                        <div class="result-card">
+                            <div class="result-label" data-i18n="yearlyHoursLabel">Rocznie odzyskujesz</div>
                             <div class="result-value" id="yearly-hours">0</div>
-                            <div class="result-unit" data-i18n="hoursUnit">godzin</div>
+                            <div class="result-sublabel" data-i18n="hoursUnit">godzin</div>
+                        </div>
+
+                        <div class="result-card highlight">
+                            <div class="result-label" data-i18n="yearlyMoneyLabel">Wartość roczna</div>
+                            <div class="result-value" id="yearly-money">0</div>
+                            <div class="result-sublabel" data-i18n="savedMoney">zaoszczędzone</div>
+                        </div>
+
+                        <div class="result-card highlight">
+                            <div class="result-label" data-i18n="workDaysLabel">Równowartość</div>
+                            <div class="result-value" id="work-days">0</div>
+                            <div class="result-sublabel" data-i18n="workYear">dni pracy rocznie</div>
                         </div>
                     </div>
 
-                    <div class="result-sub">
-                        <span data-i18n="financialValuePrefix">Wartość finansowa:</span>
-                        <strong id="yearly-money">0 zł</strong>
-                        <span data-i18n="perYearSuffix">rocznie</span>
-                        <br>
-                        <span data-i18n="equivalentPrefix">To równowartość:</span>
-                        <strong id="work-days">0 dni roboczych</strong>
+                    <!-- Disclaimer: honest note about assumptions -->
+                    <div class="disclaimer-box">
+                        <div class="disclaimer-icon">ℹ️</div>
+                        <div class="disclaimer-text" id="disclaimer-text">
+                            <!-- filled by JS -->
+                        </div>
                     </div>
 
+                    <!-- Progress Bar -->
                     <div class="progress-container">
-                        <div class="progress-label" data-i18n="automationPotential">Potencjał automatyzacji</div>
+                        <div class="progress-header">
+                            <span class="progress-title" data-i18n="efficiencyLabel">Obciążenie zadaniami
+                                manualnymi</span>
+                            <span class="progress-percentage" id="monthly-days">0 dni</span>
+                        </div>
                         <div class="progress-bar">
                             <div class="progress-fill" id="progress-fill"></div>
                         </div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:10px;" data-i18n="progressNote">
+                            Względem 160 godzin roboczych miesięcznie
+                        </div>
                     </div>
 
-                    <div class="result-highlight">
-                        <p data-i18n="highlightLine1">🚀 Dzięki automatyzacji odzyskasz:</p>
-                        <p><strong id="monthly-days">0 dni</strong> <span data-i18n="highlightLine2Suffix">miesięcznie
-                                na rozwój i nowych klientów!</span></p>
-                        <div class="efficiency-badge" data-i18n="badgeText">~90% mniej manualnej pracy</div>
+                    <!-- CTA -->
+                    <div class="cta-section">
+                        <h3 class="cta-title" data-i18n="ctaTitle">Gotowy zobaczyć co konkretnie możemy zautomatyzować?
+                        </h3>
+                        <p class="cta-text" data-i18n="ctaText">
+                            Kalkulator pokazuje potencjał — realne oszczędności zależą od specyfiki Twojego biura. Umów
+                            bezpłatną konsultację i sprawdź, które procesy opłaca się zautomatyzować właśnie u Ciebie.
+                        </p>
+                        <a href="https://accounting.artwebcraft.com/#kontakt" class="cta-button" data-i18n="ctaButton">
+                            📅 Umów bezpłatną konsultację
+                        </a>
                     </div>
                 </div>
-
-                <!-- CTA Section -->
-                <div class="cta-section">
-                    <p class="cta-text" data-i18n="ctaText">Chcesz zobaczyć, jak to działa w praktyce?</p>
-                    <a href="#pricing" class="cta-button" onclick="scrollToPricing(event)" data-i18n="ctaButton">Zobacz
-                        Ofertę</a>
-                </div>
             </div>
-
-            <!-- Empty State -->
-            <div class="empty-state" id="empty-state">
-                <div class="empty-state-icon">👆</div>
-                <p data-i18n="emptyStateText">Kliknij zadania powyżej i wprowadź swoje dane,<br>aby zobaczyć potencjalne
-                    oszczędności</p>
-            </div>
-
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">✓ Dane zapisane!</div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-main">
+            <div class="footer-brand">
+                <a href="https://www.artwebcraft.com/" class="logo">
+                    <img class="img" src="./logoartwebcraft1.png" alt="ArtWebCraft logo" />
+                </a>
+                <div class="footer-tagline" data-i18n="footerTagline">AI Systems That Convert</div>
+            </div>
+            <nav class="footer-nav">
+                <a href="https://accounting.artwebcraft.com/" class="nav-link" data-i18n="navProcess">Proces</a>
+                <a href="https://accounting.artwebcraft.com/#kontakt" class="nav-link"
+                    data-i18n="navContact">Kontakt</a>
+            </nav>
+            <div class="footer-contact">
+                <span data-i18n="footerEmail">Email:</span>
+                <a href="mailto:accounting@artwebcraft.com">accounting@artwebcraft.com</a>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            © 2026 ArtWebCraft. <span data-i18n="footerRights">All rights reserved.</span>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast"></div>
 
     <script>
-        // ===== I18N DICTIONARY =====
+        // ====== PARTICLES ======
+        (function () {
+            const canvas = document.getElementById('particles-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [], animationId;
+
+            class Particle {
+                constructor(x, y) {
+                    this.x = x; this.y = y;
+                    this.vx = (Math.random() - 0.5) * 0.5;
+                    this.vy = (Math.random() - 0.5) * 0.5;
+                    this.radius = Math.random() * 2 + 1;
+                }
+                update() {
+                    this.x += this.vx; this.y += this.vy;
+                    if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                    if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(91, 159, 255, 0.6)';
+                    ctx.fill();
+                }
+            }
+
+            function initParticles() {
+                particles = [];
+                const count = Math.floor((canvas.width * canvas.height) / 15000);
+                for (let i = 0; i < count; i++)
+                    particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+            }
+
+            function drawConnections() {
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < 120) {
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(91,159,255,${0.2 * (1 - dist / 120)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                drawConnections();
+                animationId = requestAnimationFrame(animate);
+            }
+
+            function resizeCanvas() {
+                const c = canvas.parentElement;
+                canvas.width = c.offsetWidth;
+                canvas.height = c.offsetHeight;
+                initParticles();
+            }
+
+            resizeCanvas();
+            animate();
+            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('beforeunload', () => { if (animationId) cancelAnimationFrame(animationId); });
+        })();
+
+        // ====== i18n ======
         const i18n = {
             pl: {
-                pageTitle: "Kalkulator Oszczędności - Automatyzacja Księgowości",
-                headerTitle: "💡 Ile Czasu i Pieniędzy Możesz Odzyskać?",
-                headerSubtitle: "Sprawdź, ile zaoszczędzisz dzięki automatyzacji powtarzalnych zadań w Twoim biurze",
+                pageTitle: "Kalkulator Oszczędności - Automatyzacja Księgowości | ArtWebCraft",
+                title: "Kalkulator Oszczędności",
+                subtitle: "Sprawdź ile czasu i pieniędzy tracisz na czynności, które możemy zautomatyzować",
+                rateLabel: "Twoja stawka godzinowa",
+                rateHint: "Wpisz ile zarabiasz za godzinę swojej pracy (brutto lub netto — ważne, żeby być konsekwentnym)",
+                rateError: "Proszę podać poprawną stawkę godzinową (min. 1)",
+                tasksTitle: "Wybierz zadania do automatyzacji",
 
-                tasksSectionTitle: "📋 Kliknij zadania i wprowadź swoje dane",
-                task1Title: "Przypomnienia o dokumentach",
-                task1Desc: "Automatyczne maile o brakujących fakturach, umowach, PIT-ach",
-                task2Title: "Faktury cykliczne",
-                task2Desc: "Automatyczne generowanie i wysyłka faktur abonamentowych",
-                task3Title: "Follow-up płatności",
-                task3Desc: "Przypomnienia o nieopłaconych fakturach, eskalacje",
-                task4Title: "Monitorowanie terminów",
-                task4Desc: "Automatyczne powiadomienia o terminach VAT, ZUS, JPK",
+                task1Title: "Przetwarzanie faktur",
+                task1Desc: "Ręczne weryfikowanie i księgowanie faktur kosztowych",
+                task2Title: "Zarządzanie emailami",
+                task2Desc: "Segregacja korespondencji i pisanie odpowiedzi",
+                task3Title: "Generowanie raportów",
+                task3Desc: "Tworzenie zestawień i raportów miesięcznych",
+                task4Title: "Uzgadnianie wyciągów bankowych",
+                task4Desc: "Ręczne dopasowywanie operacji bankowych do zapisów",
+                task5Title: "Komunikacja z klientami",
+                task5Desc: "Ręczne wysyłanie przypomnień i powiadomień",
 
-                labelClients: "Liczba klientów:",
-                labelReminderTime: "Czas na przypomnienie (min):",
-                labelInvoicesPerMonth: "Liczba faktur/mc:",
-                labelInvoiceTime: "Czas na fakturę (min):",
-                labelFollowupsPerMonth: "Liczba follow-upów/mc:",
-                labelFollowupTime: "Czas na follow-up (min):",
-                labelMonitoringTime: "Czas monitorowania (min):",
+                countLabel: "Liczba miesięcznie",
+                timeLabel: "Czas / szt. (minuty)",
+                totalTime: "Łączny czas:",
+                minutesMonth: "minut / miesiąc",
 
-                monthlyPrefix: "Miesięcznie:",
-                minutesShort: "min",
+                calculateBtn: "🚀 Oblicz Oszczędności",
+                emptyState: "Rozwiń zadania, które chcesz zautomatyzować, wpisz liczby i sprawdź ile możesz zyskać!",
 
-                rateSectionTitle: "💰 Twoja stawka",
-                rateLabel: "Średnia stawka godzinowa pracownika (zł/h):",
-                rateError: "Wprowadź stawkę ≥ 1 zł",
-                calcButton: "Oblicz Oszczędności",
+                summaryMinutesLabel: "Miesięcznie tracisz",
+                summaryMinutesUnit: "minut na czynności manualne",
+                summaryHoursLabel: "czyli",
+                summaryHoursUnit: "godzin",
+                summaryValueLabel: "o wartości",
+                summaryValueUnit: "miesięcznie (wg Twojej stawki)",
 
-                monthlyLabel: "Miesięcznie",
-                yearlyLabel: "Rocznie",
+                breakdownTitle: "Rozkład według zadań",
+                breakdownMinutesUnit: "min/mies.",
+                breakdownHoursUnit: "godz/mies.",
+
+                monthlyHoursLabel: "Miesięcznie odzyskujesz",
+                yearlyHoursLabel: "Rocznie odzyskujesz",
+                yearlyMoneyLabel: "Wartość roczna",
+                savedMoney: "wg Twojej stawki godzinowej",
+                workDaysLabel: "Równowartość",
+                workYear: "dni pracy rocznie (przy 8h/dzień)",
                 hoursUnit: "godzin",
 
-                financialValuePrefix: "Wartość finansowa:",
-                perYearSuffix: "rocznie",
-                equivalentPrefix: "To równowartość:",
-                automationPotential: "Potencjał automatyzacji",
+                efficiencyLabel: "Obciążenie zadaniami manualnymi",
+                progressNote: "Względem 160 godzin roboczych miesięcznie (standard dla etatu)",
 
-                highlightLine1: "🚀 Dzięki automatyzacji odzyskasz:",
-                highlightLine2Suffix: "miesięcznie na rozwój i nowych klientów!",
-                badgeText: "~90% mniej manualnej pracy",
+                disclaimerText: (hours, rate, currency) =>
+                    `<strong>Jak liczymy?</strong> Kalkulator sumuje czas który wpisujesz i mnoży go przez Twoją stawkę (${rate} ${currency}/h). Wynik to <strong>górny pułap</strong> potencjalnych oszczędności — zakładamy, że automatyzacja obsługuje dane zadanie w 100%. W praktyce część zadań wymaga nadzoru człowieka. Dokładny zakres i realny czas zwrotu ustalimy razem na konsultacji.`,
 
-                ctaText: "Chcesz zobaczyć, jak to działa w praktyce?",
-                ctaButton: "Zobacz Ofertę",
+                ctaTitle: "Gotowy zobaczyć co konkretnie możemy zautomatyzować?",
+                ctaText: "Kalkulator pokazuje potencjał — realne oszczędności zależą od specyfiki Twojego biura. Umów bezpłatną konsultację i sprawdź, które procesy opłaca się zautomatyzować właśnie u Ciebie.",
+                ctaButton: "📅 Umów bezpłatną konsultację",
 
-                emptyStateText: "Kliknij zadania powyżej i wprowadź swoje dane,<br>aby zobaczyć potencjalne oszczędności",
+                footerTagline: "AI Systems That Convert",
+                footerEmail: "Email:",
+                footerRights: "Wszelkie prawa zastrzeżone.",
+                navProcess: "Proces",
+                navContact: "Kontakt",
 
-                toastSaved: "✓ Obliczenia zapisane!",
-                toastLoaded: "Dane załadowane z ostatniej sesji",
-
-                // placeholders
-                phExample80: "np. 80",
-                phExample6: "np. 6",
-                phExample150: "np. 150",
-                phExample4: "np. 4",
-                phExample60: "np. 60",
-                phExample5: "np. 5",
-                phExample3: "np. 3",
-                phExample100: "np. 100",
-
-                // dynamic units for results
-                workDaysSuffix: "dni roboczych",
-                monthlyDaysSuffix: "dni"
+                currency: "zł",
+                currencySymbol: "zł",
+                locale: "pl-PL",
+                daysUnit: "dni"
             },
             en: {
-                pageTitle: "Savings Calculator - Accounting Automation",
-                headerTitle: "💡 How Much Time and Money Can You Recover?",
-                headerSubtitle: "Estimate how much you can save by automating repetitive tasks in your accounting office",
+                pageTitle: "Savings Calculator - Accounting Automation | ArtWebCraft",
+                title: "Savings Calculator",
+                subtitle: "See how much time and money you spend on tasks we can automate",
+                rateLabel: "Your hourly rate",
+                rateHint: "Enter your hourly billing or labour rate (gross or net — just stay consistent)",
+                rateError: "Please enter a valid hourly rate (min. 1)",
+                tasksTitle: "Choose tasks to automate",
 
-                tasksSectionTitle: "📋 Click a task and enter your numbers",
-                task1Title: "Missing documents reminders",
-                task1Desc: "Automated emails for missing invoices, agreements, tax documents",
-                task2Title: "Recurring invoices",
-                task2Desc: "Automatic generation and sending of subscription invoices",
-                task3Title: "Payment follow-ups",
-                task3Desc: "Reminders for unpaid invoices and escalation steps",
-                task4Title: "Deadline monitoring",
-                task4Desc: "Automatic reminders for VAT, payroll, reporting deadlines",
+                task1Title: "Invoice Processing",
+                task1Desc: "Manual verification and posting of cost invoices",
+                task2Title: "Email Management",
+                task2Desc: "Sorting correspondence and writing replies",
+                task3Title: "Report Generation",
+                task3Desc: "Creating monthly summaries and reports",
+                task4Title: "Bank Statement Reconciliation",
+                task4Desc: "Manually matching bank transactions to ledger entries",
+                task5Title: "Client Communication",
+                task5Desc: "Manually sending reminders and notifications",
 
-                labelClients: "Number of clients:",
-                labelReminderTime: "Time per reminder (min):",
-                labelInvoicesPerMonth: "Invoices per month:",
-                labelInvoiceTime: "Time per invoice (min):",
-                labelFollowupsPerMonth: "Follow-ups per month:",
-                labelFollowupTime: "Time per follow-up (min):",
-                labelMonitoringTime: "Monitoring time (min):",
+                countLabel: "Monthly count",
+                timeLabel: "Time / item (minutes)",
+                totalTime: "Total time:",
+                minutesMonth: "minutes / month",
 
-                monthlyPrefix: "Monthly:",
-                minutesShort: "min",
+                calculateBtn: "🚀 Calculate Savings",
+                emptyState: "Expand the tasks you want to automate, fill in the numbers and see how much you can save!",
 
-                rateSectionTitle: "💰 Your rate",
-                rateLabel: "Average hourly rate (€/h):",
-                rateError: "Enter a rate ≥ 1 €",
-                calcButton: "Calculate savings",
+                summaryMinutesLabel: "You spend monthly",
+                summaryMinutesUnit: "minutes on manual tasks",
+                summaryHoursLabel: "which is",
+                summaryHoursUnit: "hours",
+                summaryValueLabel: "worth",
+                summaryValueUnit: "per month (at your rate)",
 
-                monthlyLabel: "Monthly",
-                yearlyLabel: "Yearly",
+                breakdownTitle: "Breakdown by task",
+                breakdownMinutesUnit: "min/mo.",
+                breakdownHoursUnit: "hrs/mo.",
+
+                monthlyHoursLabel: "You reclaim monthly",
+                yearlyHoursLabel: "You reclaim yearly",
+                yearlyMoneyLabel: "Annual value",
+                savedMoney: "at your hourly rate",
+                workDaysLabel: "Equivalent to",
+                workYear: "work days per year (8h/day)",
                 hoursUnit: "hours",
 
-                financialValuePrefix: "Financial value:",
-                perYearSuffix: "per year",
-                equivalentPrefix: "Equivalent to:",
-                automationPotential: "Automation potential",
+                efficiencyLabel: "Manual task load",
+                progressNote: "Compared to 160 working hours per month (standard full-time)",
 
-                highlightLine1: "🚀 With automation you can recover:",
-                highlightLine2Suffix: "per month for growth and new clients!",
-                badgeText: "~90% less manual work",
+                disclaimerText: (hours, rate, currency) =>
+                    `<strong>How we calculate:</strong> The calculator adds up the time you enter and multiplies it by your rate (${rate} ${currency}/h). The result is the <strong>upper ceiling</strong> of potential savings — assuming automation handles each task 100%. In practice, some tasks still need human oversight. The exact scope and real payback period will be established together during your consultation.`,
 
-                ctaText: "Want to see how it works in practice?",
-                ctaButton: "See the offer",
+                ctaTitle: "Ready to see what we can actually automate for you?",
+                ctaText: "This calculator shows the potential — real savings depend on your specific practice. Book a free consultation to find out which processes make sense to automate in your case.",
+                ctaButton: "📅 Book a Free Consultation",
 
-                emptyStateText: "Click tasks above and enter your numbers<br>to see potential savings",
+                footerTagline: "AI Systems That Convert",
+                footerEmail: "Email:",
+                footerRights: "All rights reserved.",
+                navProcess: "Process",
+                navContact: "Contact",
 
-                toastSaved: "✓ Calculations saved!",
-                toastLoaded: "Data loaded from your last session",
-
-                // placeholders
-                phExample80: "e.g. 80",
-                phExample6: "e.g. 6",
-                phExample150: "e.g. 150",
-                phExample4: "e.g. 4",
-                phExample60: "e.g. 60",
-                phExample5: "e.g. 5",
-                phExample3: "e.g. 3",
-                phExample100: "e.g. 100",
-
-                // dynamic units for results
-                workDaysSuffix: "work days",
-                monthlyDaysSuffix: "days"
+                currency: "EUR",
+                currencySymbol: "€",
+                locale: "en-IE",
+                daysUnit: "days"
             }
         };
 
-        const localeCfg = {
-            pl: { locale: "pl-PL", currency: "PLN", currencySymbol: "zł" },
-            en: { locale: "en-IE", currency: "EUR", currencySymbol: "€" }
-        };
-
-        let currentLang = localStorage.getItem("lang") || "pl";
+        let currentLang = "pl";
 
         function setLang(lang) {
-            currentLang = (lang === "en") ? "en" : "pl";
-            localStorage.setItem("lang", currentLang);
-            document.documentElement.lang = currentLang;
+            currentLang = lang;
 
-            // highlight active button
             document.querySelectorAll("[data-set-lang]").forEach(btn => {
-                btn.classList.toggle("active", btn.getAttribute("data-set-lang") === currentLang);
+                btn.classList.toggle("active", btn.getAttribute("data-set-lang") === lang);
             });
 
-            // text nodes
             document.querySelectorAll("[data-i18n]").forEach(el => {
                 const key = el.getAttribute("data-i18n");
-                const val = i18n[currentLang][key];
-                if (typeof val === "string") {
-                    // allow <br> in a few places
-                    if (val.includes("<br>")) el.innerHTML = val;
-                    else el.textContent = val;
+                const val = i18n[lang][key];
+                if (!val || typeof val === 'function') return;
+                if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+                    el.placeholder = val;
+                } else {
+                    el.textContent = val;
                 }
             });
 
-            // placeholders
-            document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-                const key = el.getAttribute("data-i18n-placeholder");
-                const val = i18n[currentLang][key];
-                if (typeof val === "string") el.setAttribute("placeholder", val);
-            });
+            // Update currency symbol next to input
+            document.getElementById('rate-currency').textContent = i18n[lang].currencySymbol;
 
-            // also update document title (since we used data-i18n there)
-            document.title = i18n[currentLang].pageTitle;
-
-            // update error text immediately (in case it's visible)
-            const err = document.getElementById("err-stawka");
-            if (err) err.textContent = i18n[currentLang].rateError;
-
-            // update results silently if visible
             refreshResultsIfVisible();
         }
 
-        function formatInt(n) {
-            return new Intl.NumberFormat(localeCfg[currentLang].locale, { maximumFractionDigits: 0 }).format(n);
+        // ====== Formatters ======
+        function fmt(n) {
+            return new Intl.NumberFormat(i18n[currentLang].locale, { maximumFractionDigits: 1 }).format(n);
         }
 
-        function formatMoney(n) {
-            // display currency nicely: "12 345 zł" / "€12,345"
-            const formatted = new Intl.NumberFormat(localeCfg[currentLang].locale, {
-                style: "currency",
-                currency: localeCfg[currentLang].currency,
-                maximumFractionDigits: 0
-            }).format(n);
-
-            // For PL we prefer "12 345 zł" instead of "12 345,00 zł" (already 0 decimals) and keep symbol after number by locale.
-            return formatted;
+        function fmtInt(n) {
+            return new Intl.NumberFormat(i18n[currentLang].locale, { maximumFractionDigits: 0 }).format(n);
         }
 
-        // ====== ORIGINAL CALC LOGIC (with small i18n hooks) ======
+        function fmtMoney(n) {
+            const lang = currentLang;
+            if (lang === 'pl') {
+                return fmtInt(n) + ' zł';
+            } else {
+                return '€' + fmtInt(n);
+            }
+        }
 
-        // Elements
+        // ====== DOM refs ======
         const taskItems = document.querySelectorAll('.task-item');
         const stawkaInput = document.getElementById('stawka');
         const resultsSection = document.getElementById('results');
         const emptyState = document.getElementById('empty-state');
         const toast = document.getElementById('toast');
 
-        // Result elements
-        const monthlyHoursEl = document.getElementById('monthly-hours');
-        const yearlyHoursEl = document.getElementById('yearly-hours');
-        const yearlyMoneyEl = document.getElementById('yearly-money');
-        const workDaysEl = document.getElementById('work-days');
-        const monthlyDaysEl = document.getElementById('monthly-days');
-        const progressFill = document.getElementById('progress-fill');
-
-        // Constants
-        const SAVINGS_PERCENT = 0.9; // 90% efficiency
-        const MAX_HOURS = 60; // Max hours for progress bar scale
-
-        // Task click handling - toggle expand
+        // ====== Task accordion + live preview ======
         taskItems.forEach(item => {
-            item.querySelector('.task-header').addEventListener('click', function () {
+            item.querySelector('.task-header').addEventListener('click', () => {
                 item.classList.toggle('active');
             });
-
-            // Real-time calculation on input change
-            const inputs = item.querySelectorAll('.task-input');
-            inputs.forEach(input => {
-                input.addEventListener('input', function () {
-                    updateTaskResult(item);
-                });
+            item.querySelectorAll('.task-input').forEach(input => {
+                input.addEventListener('input', () => updateTaskResult(item));
             });
         });
 
-        // Smooth scroll for CTA
-        function scrollToPricing(e) {
-            e.preventDefault();
-            const pricingSection = document.querySelector('#pricing');
-            if (pricingSection) {
-                pricingSection.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        // Show toast notification
-        function showToast(message) {
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2000);
-        }
-
-        // Update task result display
         function updateTaskResult(taskItem) {
-            const countInput = taskItem.querySelector('[data-field="count"]');
-            const timeInput = taskItem.querySelector('[data-field="time"]');
-            const resultEl = taskItem.querySelector('.task-result-value');
-
-            if (countInput && timeInput && resultEl) {
-                const count = parseFloat(countInput.value) || 0;
-                const time = parseFloat(timeInput.value) || 0;
-                const total = count * time;
-
-                resultEl.textContent = (total || 0).toFixed(0);
-            }
+            const count = parseFloat(taskItem.querySelector('[data-field="count"]').value) || 0;
+            const time = parseFloat(taskItem.querySelector('[data-field="time"]').value) || 0;
+            taskItem.querySelector('.task-result-value').textContent = fmtInt(count * time);
         }
 
         function refreshResultsIfVisible() {
             if (!resultsSection.classList.contains("show")) return;
-
-            // silent recompute without toast
             calculateSavings({ silent: true });
         }
 
-        // Calculate function (optionally silent)
+        // ====== MAIN CALCULATION ======
+        /*
+         * Logic:
+         * For each active task:
+         *   minutesPerMonth = count × timePerItem
+         *   hoursPerMonth   = minutesPerMonth / 60
+         *   valuePerMonth   = hoursPerMonth × stawka
+         *
+         * Totals:
+         *   totalMonthlyHours = Σ hoursPerMonth
+         *   totalYearlyHours  = totalMonthlyHours × 12
+         *   totalYearlyMoney  = totalYearlyHours × stawka
+         *   workDaysPerYear   = totalYearlyHours / 8
+         *
+         * Progress bar:
+         *   % = totalMonthlyHours / 160 × 100   (160h = full-time month)
+         *
+         * No SAVINGS_PERCENT multiplier — we show the raw numbers.
+         * A disclaimer explains these are upper-ceiling estimates.
+         */
         function calculateSavings(opts = {}) {
             const silent = !!opts.silent;
 
-            // Validate hourly rate
             const stawka = parseFloat(stawkaInput.value) || 0;
             if (stawka < 1) {
                 document.getElementById('err-stawka').style.display = 'block';
                 if (!silent) stawkaInput.focus();
                 return;
-            } else {
-                document.getElementById('err-stawka').style.display = 'none';
             }
+            document.getElementById('err-stawka').style.display = 'none';
 
-            // Calculate total time from active tasks
+            // Collect task data
+            const activeTasks = [];
+            const taskMeta = [
+                { key: 'invoices', icon: '📄' },
+                { key: 'emails', icon: '📧' },
+                { key: 'reports', icon: '📊' },
+                { key: 'reconciliation', icon: '🏦' },
+                { key: 'communication', icon: '💬' }
+            ];
+
             let totalMonthlyMinutes = 0;
             let selectedCount = 0;
-            const tasksData = [];
 
-            taskItems.forEach(item => {
-                const isActive = item.classList.contains('active');
-                const taskName = item.dataset.task;
+            taskItems.forEach((item, idx) => {
+                if (!item.classList.contains('active')) return;
+                const count = parseFloat(item.querySelector('[data-field="count"]').value) || 0;
+                const time = parseFloat(item.querySelector('[data-field="time"]').value) || 0;
+                const minutes = count * time;
+                if (minutes === 0) return; // skip tasks with 0 inputs
 
-                const countInput = item.querySelector('[data-field="count"]');
-                const timeInput = item.querySelector('[data-field="time"]');
+                selectedCount++;
+                totalMonthlyMinutes += minutes;
 
-                const count = parseFloat(countInput.value) || 0;
-                const time = parseFloat(timeInput.value) || 0;
-
-                // Save task data
-                tasksData.push({
-                    name: taskName,
-                    active: isActive,
-                    count: count,
-                    time: time
+                activeTasks.push({
+                    title: item.querySelector('.task-title').textContent,
+                    icon: taskMeta[idx].icon,
+                    minutes: minutes,
+                    hours: minutes / 60
                 });
-
-                // Only count if active
-                if (isActive) {
-                    selectedCount++;
-                    totalMonthlyMinutes += count * time;
-                }
             });
 
-            // Show/hide results
             if (selectedCount === 0) {
                 resultsSection.classList.remove('show');
                 emptyState.style.display = 'block';
                 return;
-            } else {
-                resultsSection.classList.add('show');
-                emptyState.style.display = 'none';
             }
 
-            // Calculate savings with 90% efficiency
-            const monthlyHoursManual = totalMonthlyMinutes / 60;
-            const monthlyHoursSaved = Math.round(monthlyHoursManual * SAVINGS_PERCENT);
-            const yearlyHoursSaved = monthlyHoursSaved * 12;
+            resultsSection.classList.add('show');
+            emptyState.style.display = 'none';
 
-            // IMPORTANT: we treat input "stawka" as currency per hour for current language
-            const yearlyMoney = Math.round(yearlyHoursSaved * stawka);
+            // Calculations
+            const totalMonthlyHours = totalMonthlyMinutes / 60;
+            const totalYearlyHours = totalMonthlyHours * 12;
+            const totalMonthlyMoney = totalMonthlyHours * stawka;
+            const totalYearlyMoney = totalYearlyHours * stawka;
+            const workDaysPerYear = totalYearlyHours / 8;
+            const monthlyWorkDays = totalMonthlyHours / 8;
 
-            const workDays = Math.round(yearlyHoursSaved / 8);
-            const monthlyDays = Math.round(monthlyHoursSaved / 8);
+            // Summary banner
+            document.getElementById('summary-minutes').textContent = fmtInt(totalMonthlyMinutes);
+            document.getElementById('summary-hours').textContent = fmt(totalMonthlyHours);
+            document.getElementById('summary-value').textContent = fmtMoney(totalMonthlyMoney);
 
-            // Update DOM (locale-aware formatting)
-            monthlyHoursEl.textContent = formatInt(monthlyHoursSaved);
-            yearlyHoursEl.textContent = formatInt(yearlyHoursSaved);
+            // Breakdown rows
+            const breakdownEl = document.getElementById('breakdown-rows');
+            breakdownEl.innerHTML = '';
+            activeTasks.forEach(t => {
+                const row = document.createElement('div');
+                row.className = 'breakdown-row';
+                row.innerHTML = `
+                <div class="breakdown-task">
+                    <span class="breakdown-task-icon">${t.icon}</span>
+                    <span>${t.title}</span>
+                </div>
+                <span class="breakdown-minutes">${fmtInt(t.minutes)} ${i18n[currentLang].breakdownMinutesUnit}</span>
+                <span class="breakdown-hours">${fmt(t.hours)} ${i18n[currentLang].breakdownHoursUnit}</span>
+            `;
+                breakdownEl.appendChild(row);
+            });
 
-            // money
-            yearlyMoneyEl.textContent = formatMoney(yearlyMoney);
+            // Main result cards
+            document.getElementById('monthly-hours').textContent = fmt(totalMonthlyHours);
+            document.getElementById('yearly-hours').textContent = fmt(totalYearlyHours);
+            document.getElementById('yearly-money').textContent = fmtMoney(totalYearlyMoney);
+            document.getElementById('work-days').textContent = `${fmtInt(workDaysPerYear)} ${i18n[currentLang].daysUnit}`;
 
-            // work days with suffix translated
-            workDaysEl.textContent = `${formatInt(workDays)} ${i18n[currentLang].workDaysSuffix}`;
-            monthlyDaysEl.textContent = `${formatInt(monthlyDays)} ${i18n[currentLang].monthlyDaysSuffix}`;
+            // Progress bar (capped at 100%)
+            const progressPct = Math.min((totalMonthlyHours / 160) * 100, 100);
+            document.getElementById('progress-fill').style.width = progressPct + '%';
+            document.getElementById('monthly-days').textContent = `${fmt(monthlyWorkDays)} ${i18n[currentLang].daysUnit}`;
 
-            // Update progress bar
-            const progressPercentage = Math.min((monthlyHoursSaved / MAX_HOURS) * 100, 100);
-            progressFill.style.width = progressPercentage + '%';
+            // Disclaimer (dynamic, honest)
+            document.getElementById('disclaimer-text').innerHTML =
+                i18n[currentLang].disclaimerText(fmt(totalMonthlyHours), stawka, i18n[currentLang].currencySymbol);
 
             // Save to localStorage
-            const saveData = { stawka: stawka, tasks: tasksData };
-            localStorage.setItem('calcData', JSON.stringify(saveData));
+            const saveData = { stawka, tasks: [] };
+            taskItems.forEach(item => {
+                saveData.tasks.push({
+                    name: item.dataset.task,
+                    active: item.classList.contains('active'),
+                    count: parseFloat(item.querySelector('[data-field="count"]').value) || 0,
+                    time: parseFloat(item.querySelector('[data-field="time"]').value) || 0
+                });
+            });
+            localStorage.setItem('calcData_v2', JSON.stringify(saveData));
 
-            // Show toast
-            if (!silent) showToast(i18n[currentLang].toastSaved);
+            if (!silent) showToast(currentLang === 'pl' ? '✅ Obliczenia gotowe!' : '✅ Calculations ready!');
         }
 
-        // Load saved data from localStorage + init language
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2200);
+        }
+
+        // ====== INIT ======
         window.onload = () => {
-            // bind language buttons
             document.querySelectorAll("[data-set-lang]").forEach(btn => {
                 btn.addEventListener("click", () => setLang(btn.getAttribute("data-set-lang")));
             });
 
-            // set language early
             setLang(currentLang);
 
-            // restore calc data
-            const saved = localStorage.getItem('calcData');
+            // Restore saved data
+            const saved = localStorage.getItem('calcData_v2');
             if (saved) {
                 try {
                     const data = JSON.parse(saved);
-
-                    // Restore stawka
                     if (data.stawka) stawkaInput.value = data.stawka;
-
-                    // Restore tasks
                     if (data.tasks) {
-                        data.tasks.forEach(taskData => {
-                            const taskItem = document.querySelector(`[data-task="${taskData.name}"]`);
-                            if (taskItem) {
-                                // Activate task
-                                if (taskData.active) taskItem.classList.add('active');
-
-                                // Restore input values
-                                const inputs = taskItem.querySelectorAll('.task-input');
-                                inputs.forEach(input => {
-                                    const field = input.dataset.field;
-                                    if (taskData[field] !== undefined) input.value = taskData[field];
-                                });
-
-                                // Update task result
-                                updateTaskResult(taskItem);
-                            }
+                        data.tasks.forEach(td => {
+                            const item = document.querySelector(`[data-task="${td.name}"]`);
+                            if (!item) return;
+                            const countEl = item.querySelector('[data-field="count"]');
+                            const timeEl = item.querySelector('[data-field="time"]');
+                            if (countEl) countEl.value = td.count;
+                            if (timeEl) timeEl.value = td.time;
+                            updateTaskResult(item);
                         });
                     }
-
-                    showToast(i18n[currentLang].toastLoaded);
-                } catch (e) {
-                    console.log('Error loading saved data');
-                }
+                    showToast(currentLang === 'pl' ? '📂 Dane wczytane!' : '📂 Data loaded!');
+                } catch (e) { /* ignore */ }
             }
 
-            // Initialize task results
             taskItems.forEach(item => updateTaskResult(item));
+
+            // ====== LIVE CLOCK ======
+            function updateClock() {
+                const now = new Date();
+                const s = now.getSeconds();
+                const m = now.getMinutes();
+                const h = now.getHours() % 12;
+                const secDeg = s * 6;
+                const minDeg = m * 6 + s * 0.1;
+                const hourDeg = h * 30 + m * 0.5;
+                const hs = document.getElementById('hand-second');
+                const hm = document.getElementById('hand-minute');
+                const hh = document.getElementById('hand-hour');
+                if (hs) hs.style.transform = `rotate(${secDeg}deg)`;
+                if (hm) hm.style.transform = `rotate(${minDeg}deg)`;
+                if (hh) hh.style.transform = `rotate(${hourDeg}deg)`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
         };
     </script>
-
 </body>
 
 </html>
